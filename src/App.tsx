@@ -1,20 +1,32 @@
-import { Button } from '@/components/ui/button';
+import { Outlet, Route, Routes } from 'react-router-dom';
+import { MainNav } from './components/MainNav';
+import Account from './pages/Account';
+import Home from './pages/Home';
+import NotFound from './pages/NotFound';
 
-function App() {
+export default function App() {
   return (
-    <div className='w-full h-screen '>
-      <div className='h-full flex flex-col items-center justify-center gap-y-3'>
-        <h1 className='text-3xl font-bold text-text'>Eco Echo</h1>
-        <p className='text-accent'>
-          Your Ultimate Hub for Park Exploration and Community Engagement
-        </p>
-        <div className='flex items-center gap-x-3 mt-6'>
-          <Button>Sign Up</Button>
-          <Button variant='outline'>Log In</Button>
-        </div>
-      </div>
-    </div>
+    <Routes>
+      <Route path='/' element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path='account' element={<Account />} />
+        {/* <Route path='/parks' element={<ParksPage/>} />
+        <Route path='/parks/:park_id' element={<ParkDetailsPage/>} />
+        <Route path='/wishlists' element={<WishlistsPage/>} />
+        <Route path='/wishlists/:wishlist_id' element={<WishlistDetailsPage/>} />
+        <Route path='/activities' element={<ActivitiesPage/>} />
+        <Route path='/activities/:activity_id' element={<ActivityDetailsPage/>} /> */}
+        <Route path='*' element={<NotFound />} />
+      </Route>
+    </Routes>
   );
 }
 
-export default App;
+function Layout() {
+  return (
+    <div>
+      <MainNav />
+      <Outlet />
+    </div>
+  );
+}
