@@ -12,6 +12,13 @@ module.exports = {
   ],
   prefix: '',
   theme: {
+    // colors: {
+    //   primary: '#606C38',
+    //   secondary: '#283618',
+    //   background: '#FEFAE0',
+    //   accent: '#DDA15E',
+    //   text: '#BC6C25',
+    // },
     container: {
       center: true,
       padding: '2rem',
@@ -21,14 +28,6 @@ module.exports = {
     },
     extend: {
       colors: {
-        forest: {
-          100: '#c0d5cf',
-          200: '#8d9d98',
-        },
-        peach: {
-          100: '#ffcb9a',
-        },
-
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -61,6 +60,9 @@ module.exports = {
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
+        },
+        text: {
+          DEFAULT: 'hsl(var(--text))',
         },
       },
       borderRadius: {
