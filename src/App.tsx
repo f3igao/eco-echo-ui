@@ -1,8 +1,13 @@
 import { Outlet, Route, Routes } from 'react-router-dom';
 import { MainNav } from './components/MainNav';
 import Account from './pages/Account';
+import Activities from './pages/Activities';
+import ActivityDetails from './pages/ActivityDetails';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
+import ParkDetails from './pages/ParkDetails';
+import Parks from './pages/Parks';
+import Wishlists from './pages/Wishlists';
 
 export default function App() {
   return (
@@ -10,12 +15,12 @@ export default function App() {
       <Route path='/' element={<Layout />}>
         <Route index element={<Home />} />
         <Route path='account' element={<Account />} />
-        {/* <Route path='/parks' element={<ParksPage/>} />
-        <Route path='/parks/:park_id' element={<ParkDetailsPage/>} />
-        <Route path='/wishlists' element={<WishlistsPage/>} />
-        <Route path='/wishlists/:wishlist_id' element={<WishlistDetailsPage/>} />
-        <Route path='/activities' element={<ActivitiesPage/>} />
-        <Route path='/activities/:activity_id' element={<ActivityDetailsPage/>} /> */}
+        <Route path='/parks' element={<Parks />} />
+        <Route path='/parks/:park_id' element={<ParkDetails />} />
+        <Route path='/wishlists' element={<Wishlists />} />
+        {/* <Route path='/wishlists/:wishlist_id' element={<WishlistDetails/>} /> */}
+        <Route path='/activities' element={<Activities />} />
+        <Route path='/activities/:activity_id' element={<ActivityDetails />} />
         <Route path='*' element={<NotFound />} />
       </Route>
     </Routes>
