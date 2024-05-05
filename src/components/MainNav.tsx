@@ -9,15 +9,8 @@ import Link from 'next/link';
 
 export function MainNav() {
   return (
-    <NavigationMenu>
+    <NavigationMenu className='flex justify-end max-w-full mb-4'>
       <NavigationMenuList>
-        <NavigationMenuItem>
-          <Link href='/account' legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Account
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
         <NavigationMenuItem>
           <Link href='/wishlists' legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
@@ -36,6 +29,13 @@ export function MainNav() {
           <Link href='/activities' legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Activities
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link href='/account' legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Account
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>

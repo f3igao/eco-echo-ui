@@ -31,7 +31,9 @@ function Layout() {
   return (
     <div>
       <MainNav />
-      <Outlet />
+      <div className='m-6 mx-12'>
+        <Outlet />
+      </div>
     </div>
   );
 }

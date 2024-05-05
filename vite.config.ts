@@ -13,4 +13,8 @@ export default defineConfig({
   define: {
     'process.env': {},
   },
+  optimizeDeps: {
+    // resolves console warning for files does not exist in the optimize deps directory; dependency might be incompatible with the dep optimizer
+    exclude: ['chunk-bk36ksef.js'],
+  },
 });
