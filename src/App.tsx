@@ -9,7 +9,6 @@ import ParkDetails from './pages/ParkDetails';
 import Parks from './pages/Parks';
 import SignUp from './pages/SignUp';
 import Users from './pages/Users';
-import Wishlists from './pages/Wishlists';
 
 export default function App() {
   return (

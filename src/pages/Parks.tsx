@@ -1,4 +1,4 @@
-import { getParks } from '@/api/parks';
+import { createPark, getParks } from '@/api/parks';
 import Loading from '@/components/Loading';
 import ParkCard from '@/components/ParkCard';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { validateMinLength } from '@/lib/form-validations';
 import { IPark } from '@/models/park.interface';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -27,7 +27,6 @@ const formSchema = z.object({
     'Description must be at least 5 characters.'
   ),
   establishedDate: z.string(),
-  visitorCount: z.number().min(0, 'Visitor count must be more than 1.'),
   website: z.string().url({ message: 'Invalid website URL.' }),
   entranceInfo: z.string(),
 });
@@ -38,22 +37,15 @@ function Parks() {
     queryFn: getParks,
   });
 
-  // const newParkMutation = useMutation({
-  //   mutationFn: (name: string) => {
-  //     return MOCK_PARKS.push({
-  //       name,
-  //       location: 'Somewhere',
-  //       description: 'Something.',
-  //       established_date: '1995-10-09',
-  //       size: 51229,
-  //       visitor_count: 285515,
-  //       website: 'https://www.park.com',
-  //       entrance_info: 'Voluptatum doloremque non ad incidunt ut enim sunt.',
-  //       created_at: '2019-02-23 07:53:50',
-  //       updated_at: '2019-10-02 03:35:36',
-  //     });
-  //   },
-  // });
+  const { setQueryData, invalidateQueries } = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: createPark,
+    onSuccess: (data) => {
+      setQueryData(['parks', data.id], data);
+      invalidateQueries({ queryKey: ['parks'], exact: true });
+    },
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -62,14 +54,27 @@ function Parks() {
       location: '',
       description: '',
       establishedDate: '',
-      visitorCount: 0,
       website: '',
       entranceInfo: '',
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = ({
+    name,
+    location,
+    description,
+    establishedDate,
+    website,
+    entranceInfo,
+  }: z.infer<typeof formSchema>) => {
+    mutate({
+      name,
+      location,
+      description,
+      established_date: new Date(establishedDate).toISOString(),
+      website,
+      entrance_info: entranceInfo,
+    });
   };
 
   return isLoading ? (
@@ -152,36 +157,20 @@ function Parks() {
               />
               <FormField
                 control={form.control}
-                name='visitorCount'
-                render={({ field }) => (
-                  <FormItem className='flex items-center gap-x-3'>
-                    <FormLabel>Visitor Count</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
                 name='website'
                 render={({ field }) => (
                   <FormItem className='flex items-center gap-x-3'>
                     <FormLabel>Website</FormLabel>
                     <FormControl>
-                      <Input
-                        type='number'
-                        placeholder='https://...'
-                        {...field}
-                      />
+                      <Input placeholder='https://...' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              <Button type='submit'>Submit</Button>
+              <Button type='submit' disabled={isPending}>
+                {isPending ? 'Submitting...' : 'Submit'}
+              </Button>
             </form>
           </Form>
         </div>

@@ -3,7 +3,9 @@ import axios from 'axios';
 
 export function getParks() {
   return axios
-    .get('http://127.0.0.1:5000/parks', { params: { _sort: 'name' } })
+    .get('http://127.0.0.1:5000/parks', {
+      params: { _sort: 'created_on', _order: 'desc' },
+    })
     .then((res) => res.data);
 }
 
@@ -11,14 +13,10 @@ export function getPark(id: number) {
   return axios.get(`http://127.0.0.1:5000/parks/${id}`).then((res) => res.data);
 }
 
-export function createPark({ name, location }: IPark) {
+export function createPark(park: IPark) {
+  console.log(JSON.stringify(park));
   return axios
-    .post('http://127.0.0.1:5000/parks', {
-      name,
-      location,
-      userId: 1,
-      id: Date.now(),
-    })
+    .post('http://127.0.0.1:5000/parks', park)
     .then((res) => res.data);
 }
 
