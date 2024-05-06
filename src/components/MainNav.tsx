@@ -13,7 +13,7 @@ export function MainNav() {
       <div className='flex gap-x-3 cursor-pointer mx-3 items-center'>
         <img src='public/logo.svg' className='w-12' alt='logo' />
         <p className='text-text font-semibold text-2xl'>
-          <Link href='/' legacyBehavior passHref>
+          <Link href='/'>
             Eco Echo
           </Link>
         </p>
@@ -22,35 +22,35 @@ export function MainNav() {
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <Link href='/wishlists' legacyBehavior passHref>
+            <Link href='wishlists'>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                 Wishlists
               </NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href='/parks' legacyBehavior passHref>
+            <Link href='parks'>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                 Parks
               </NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href='/activities' legacyBehavior passHref>
+            <Link href='activities'>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                 Activities
               </NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href='/users' legacyBehavior passHref>
+            <Link href='users'>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                 Users
               </NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href='/account' legacyBehavior passHref>
+            <Link href='account'>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                 Account
               </NavigationMenuLink>

@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 function Home() {
   return (
@@ -8,7 +9,9 @@ function Home() {
         Your Ultimate Hub for Park Exploration and Community Engagement
       </p>
       <div className='flex items-center gap-x-3 mt-6'>
-        <Button>Sign Up</Button>
+        <Button>
+          <Link href='signup'>Sign Up</Link>
+        </Button>
         <Button variant='outline'>Log In</Button>
       </div>
     </div>

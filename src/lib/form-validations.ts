@@ -11,3 +11,5 @@ export const validateDifficultyRange = (
   maxValue: number,
   message: string
 ) => z.coerce.number().lte(maxValue, { message }).gte(minValue, { message });
+
+export const validateEmail = (email: string) => z.string().email(email);
