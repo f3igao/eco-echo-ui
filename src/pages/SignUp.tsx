@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const formSchema = z.object({
+  name: validateMinLength(2, 'Name must be at least 2 characters.'),
   email: validateEmail(),
   password: validateMinLength(6, 'Password must be at least 6 characters.'),
 });
@@ -21,6 +22,7 @@ function SignUp() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: '',
       email: '',
       password: '',
     },
@@ -38,6 +40,18 @@ function SignUp() {
           onSubmit={form.handleSubmit(onSubmit)}
           className='space-y-8 w-1/5'
         >
+          <FormField
+            control={form.control}
+            name='name'
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input placeholder='Name' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name='email'

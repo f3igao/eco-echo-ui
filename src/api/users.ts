@@ -1,32 +1,27 @@
+import { IUser } from '@/models/user.interface';
 import axios from 'axios';
-
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-}
 
 export function getUsers() {
   return axios
-    .get<User[]>('http://127.0.0.1:5000/users')
+    .get('http://127.0.0.1:5000/users', { params: { _sort: 'name' } })
     .then((res) => res.data);
 }
 
 export function getUser(id: number) {
   return axios
-    .get<User>(`http://127.0.0.1:5000/users/${id}`)
+    .get<IUser>(`http://127.0.0.1:5000/users/${id}`)
     .then((res) => res.data);
 }
 
-export function createUser(user: User) {
+export function createUser(user: IUser) {
   return axios
-    .post<User>('http://127.0.0.1:5000/users', user)
+    .post<IUser>('http://127.0.0.1:5000/users', user)
     .then((res) => res.data);
 }
 
-export function updateUser(id: number, user: User) {
+export function updateUser(id: number, user: IUser) {
   return axios
-    .put<User>(`http://127.0.0.1:5000/users/${id}`, user)
+    .put<IUser>(`http://127.0.0.1:5000/users/${id}`, user)
     .then((res) => res.data);
 }
 

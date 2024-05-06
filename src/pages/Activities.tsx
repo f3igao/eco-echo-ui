@@ -1,4 +1,4 @@
-import { getActivities } from '@/api/activity';
+import { getActivities } from '@/api/activities';
 import Loading from '@/components/Loading';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';

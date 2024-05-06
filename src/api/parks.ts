@@ -1,10 +1,5 @@
+import { IPark } from '@/models/park.interface';
 import axios from 'axios';
-
-export interface Park {
-  id: number;
-  name: string;
-  location: string;
-}
 
 export function getParks() {
   return axios
@@ -16,7 +11,7 @@ export function getPark(id: number) {
   return axios.get(`http://127.0.0.1:5000/parks/${id}`).then((res) => res.data);
 }
 
-export function createPark({ name, location }: Park) {
+export function createPark({ name, location }: IPark) {
   return axios
     .post('http://127.0.0.1:5000/parks', {
       name,
@@ -27,9 +22,9 @@ export function createPark({ name, location }: Park) {
     .then((res) => res.data);
 }
 
-export function updatePark(id: number, { name, location }: Park) {
+export function updatePark(id: number, { name, location }: IPark) {
   return axios
-    .put<Park>(`http://127.0.0.1:5000/parks/${id}`, {
+    .put<IPark>(`http://127.0.0.1:5000/parks/${id}`, {
       name,
       location,
     })

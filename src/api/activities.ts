@@ -1,10 +1,5 @@
+import { IActivity } from '@/models/activity.interface';
 import axios from 'axios';
-
-export interface Activity {
-  id: number;
-  title: string;
-  body: string;
-}
 
 export function getActivities() {
   return axios
@@ -18,22 +13,21 @@ export function getActivity(id: number) {
     .then((res) => res.data);
 }
 
-export function createActivity({ title, body }: Activity) {
+export function createActivity({ name, description }: IActivity) {
   return axios
     .post('http://127.0.0.1:5000/activities', {
-      title,
-      body,
-      userId: 1,
+      name,
+      description,
       id: Date.now(),
     })
     .then((res) => res.data);
 }
 
-export function updateActivity(id: number, { title, body }: Activity) {
+export function updateActivity(id: number, { name, description }: IActivity) {
   return axios
-    .put<Activity>(`http://127.0.0.1:5000/activities/${id}`, {
-      title,
-      body,
+    .put<IActivity>(`http://127.0.0.1:5000/activities/${id}`, {
+      name,
+      description,
     })
     .then((res) => res.data);
 }

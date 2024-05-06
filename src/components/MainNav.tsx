@@ -13,48 +13,51 @@ export function MainNav() {
       <div className='flex gap-x-3 cursor-pointer mx-3 items-center'>
         <img src='public/logo.svg' className='w-12' alt='logo' />
         <p className='text-text font-semibold text-2xl'>
-          <Link href='/'>
-            Eco Echo
-          </Link>
+          <Link href='/'>Eco Echo</Link>
         </p>
       </div>
 
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <Link href='wishlists'>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Wishlists
-              </NavigationMenuLink>
-            </Link>
+            <NavigationMenuLink
+              href='wishlists'
+              className={navigationMenuTriggerStyle()}
+            >
+              Wishlists
+            </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href='parks'>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Parks
-              </NavigationMenuLink>
-            </Link>
+            <NavigationMenuLink
+              href='parks'
+              className={navigationMenuTriggerStyle()}
+            >
+              Parks
+            </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href='activities'>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Activities
-              </NavigationMenuLink>
-            </Link>
+            <NavigationMenuLink
+              href='activities'
+              className={navigationMenuTriggerStyle()}
+            >
+              Activities
+            </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href='users'>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Users
-              </NavigationMenuLink>
-            </Link>
+            <NavigationMenuLink
+              href='users'
+              className={navigationMenuTriggerStyle()}
+            >
+              Users
+            </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href='account'>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Account
-              </NavigationMenuLink>
-            </Link>
+            <NavigationMenuLink
+              href='account'
+              className={navigationMenuTriggerStyle()}
+            >
+              Account
+            </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
