@@ -29,11 +29,11 @@ export default function App() {
 
 function Layout() {
   return (
-    <div>
+    <>
       <MainNav />
-      <div className='m-6 mx-12'>
+      <div className='my-6 mx-12'>
         <Outlet />
       </div>
-    </div>
+    </>
   );
 }

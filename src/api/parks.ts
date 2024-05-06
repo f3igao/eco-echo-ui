@@ -1,5 +1,11 @@
 import axios from 'axios';
 
+export interface Park {
+  id: number;
+  name: string;
+  location: string;
+}
+
 export function getParks() {
   return axios
     .get('http://127.0.0.1:5000/parks', { params: { _sort: 'name' } })
@@ -10,14 +16,29 @@ export function getPark(id: number) {
   return axios.get(`http://127.0.0.1:5000/parks/${id}`).then((res) => res.data);
 }
 
-export function createPark({ title, body }: { title: string; body: string }) {
+export function createPark({ name, location }: Park) {
   return axios
     .post('http://127.0.0.1:5000/parks', {
-      title,
-      body,
+      name,
+      location,
       userId: 1,
       id: Date.now(),
     })
+    .then((res) => res.data);
+}
+
+export function updatePark(id: number, { name, location }: Park) {
+  return axios
+    .put<Park>(`http://127.0.0.1:5000/parks/${id}`, {
+      name,
+      location,
+    })
+    .then((res) => res.data);
+}
+
+export function deletePark(id: number) {
+  return axios
+    .delete(`http://127.0.0.1:5000/parks/${id}`)
     .then((res) => res.data);
 }
 
