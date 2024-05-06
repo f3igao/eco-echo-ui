@@ -1,4 +1,4 @@
-import { getActivities } from '@/api/activities';
+import { createActivity, getActivities } from '@/api/activities';
 import Loading from '@/components/Loading';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -13,13 +13,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  validateDifficultyRange,
   validateMaxDuration,
   validateMinLength,
+  validateRange,
 } from '@/lib/form-validations';
 import { IActivity } from '@/models/activity.interface';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Pencil } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -30,8 +31,9 @@ const formSchema = z.object({
     'Description must be at least 5 characters.'
   ),
   duration: validateMaxDuration(48, 'Activity cannot be longer than 48 hours'),
-  difficulty: validateDifficultyRange(0, 10, 'Difficulty is between 0 and 10'),
-  requiresSpecialEquipment: z.boolean(),
+  difficulty: validateRange(0, 10, 'Difficulty is between 0 and 10'),
+  requireSpecialEquipment: z.boolean(),
+  parkId: validateRange(1, 20, 'Park id must be between 1 and 20'),
 });
 
 function Activities() {
@@ -47,14 +49,41 @@ function Activities() {
       description: '',
       duration: 1,
       difficulty: 0,
-      requiresSpecialEquipment: false,
+      requireSpecialEquipment: false,
+      parkId: 1,
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const { setQueryData, invalidateQueries } = useQueryClient();
+  const { mutate, isPending } = useMutation({
+    mutationFn: createActivity,
+    onSuccess: (data) => {
+      setQueryData(['activities', data.id], data);
+      invalidateQueries({ queryKey: ['activities'], exact: true });
+    },
+  });
+
+  const onSubmit = ({
+    name,
+    description,
+    duration,
+    difficulty,
+    requireSpecialEquipment,
+    parkId,
+  }: z.infer<typeof formSchema>) => {
+    mutate({
+      name,
+      description,
+      duration,
+      difficulty,
+      require_special_equipment: requireSpecialEquipment,
+      park_id: parkId,
+    });
   };
 
+  const onEdit = (id: number) => {
+    
+  };
   return isLoading ? (
     <Loading />
   ) : (
@@ -71,15 +100,23 @@ function Activities() {
               difficulty,
               require_special_equipment,
             }: IActivity) => (
-              <li key={activity_id}>
-                <span>{name} |</span>
-                <span>{description} |</span>
-                <span>duration: {duration} |</span>
-                <span>difficulty: {difficulty} |</span>
-                {require_special_equipment && (
-                  <span>Special Equiment Required</span>
-                )}
-              </li>
+              <div className='flex gap-x-2 items-center' key={activity_id}>
+                <li>
+                  <span>{name} |</span>
+                  <span>{description} |</span>
+                  <span>duration: {duration} |</span>
+                  <span>difficulty: {difficulty} |</span>
+                  {require_special_equipment && (
+                    <span>Special Equiment Required</span>
+                  )}
+                </li>
+                <Pencil
+                  className='w-4 h-4'
+                  onClick={() => {
+                    onEdit(activity_id!);
+                  }}
+                />
+              </div>
             )
           )}
         </ul>
@@ -146,7 +183,7 @@ function Activities() {
               />
               <FormField
                 control={form.control}
-                name='requiresSpecialEquipment'
+                name='requireSpecialEquipment'
                 render={({ field }) => (
                   <FormItem className='flex items-center gap-x-3'>
                     <FormLabel>Requires Special Equipment</FormLabel>
@@ -160,7 +197,10 @@ function Activities() {
                   </FormItem>
                 )}
               />
-              <Button type='submit'>Submit</Button>
+              {/* TODO: add park association */}
+              <Button type='submit' disabled={isPending}>
+                {isPending ? 'Submitting...' : 'Submit'}
+              </Button>
             </form>
           </Form>
         </div>

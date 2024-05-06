@@ -37,16 +37,6 @@ function Parks() {
     queryFn: getParks,
   });
 
-  const { setQueryData, invalidateQueries } = useQueryClient();
-
-  const { mutate, isPending } = useMutation({
-    mutationFn: createPark,
-    onSuccess: (data) => {
-      setQueryData(['parks', data.id], data);
-      invalidateQueries({ queryKey: ['parks'], exact: true });
-    },
-  });
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,6 +46,15 @@ function Parks() {
       establishedDate: '',
       website: '',
       entranceInfo: '',
+    },
+  });
+
+  const { setQueryData, invalidateQueries } = useQueryClient();
+  const { mutate, isPending } = useMutation({
+    mutationFn: createPark,
+    onSuccess: (data) => {
+      setQueryData(['parks', data.id], data);
+      invalidateQueries({ queryKey: ['parks'], exact: true });
     },
   });
 
@@ -98,6 +97,7 @@ function Parks() {
                 description={description}
                 location={location}
                 website={website}
+                id={park_id!}
               ></ParkCard>
             )
           )}

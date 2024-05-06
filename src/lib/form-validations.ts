@@ -6,7 +6,7 @@ export const validateMinLength = (minLength: number, message: string) =>
 export const validateMaxDuration = (maxDuration: number, message: string) =>
   z.coerce.number().lte(maxDuration, { message });
 
-export const validateDifficultyRange = (
+export const validateRange = (
   minValue: number,
   maxValue: number,
   message: string

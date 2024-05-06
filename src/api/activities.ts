@@ -13,13 +13,9 @@ export function getActivity(id: number) {
     .then((res) => res.data);
 }
 
-export function createActivity({ name, description }: IActivity) {
+export function createActivity(activity: IActivity) {
   return axios
-    .post('http://127.0.0.1:5000/activities', {
-      name,
-      description,
-      id: Date.now(),
-    })
+    .post('http://127.0.0.1:5000/activities', activity)
     .then((res) => res.data);
 }
 
