@@ -19,14 +19,14 @@ export function MainNav() {
 
       <NavigationMenu>
         <NavigationMenuList>
-          <NavigationMenuItem>
+          {/* <NavigationMenuItem>
             <NavigationMenuLink
               href='wishlists'
               className={navigationMenuTriggerStyle()}
             >
               Wishlists
             </NavigationMenuLink>
-          </NavigationMenuItem>
+          </NavigationMenuItem> */}
           <NavigationMenuItem>
             <NavigationMenuLink
               href='parks'
