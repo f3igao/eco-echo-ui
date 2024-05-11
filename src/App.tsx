@@ -32,11 +32,11 @@ export default function App() {
 
 function Layout() {
   return (
-    <>
+    <div className='flex flex-col h-screen'>
       <MainNav />
-      <div className='my-6 mx-12'>
+      <div className='flex-grow flex items-center justify-center p-2'>
         <Outlet />
       </div>
-    </>
+    </div>
   );
 }

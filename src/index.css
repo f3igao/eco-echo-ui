@@ -7,12 +7,6 @@
     font-family: Inter, sans-serif;
     font-feature-settings: 'liga' 1, 'calt' 1; /* fix for Chrome */
 
-    html,
-    body {
-      height: 100%;
-      margin: 0.5rem;
-    }
-
     .code {
       font-family: Courier, 'Courier New', monospace;
       font-size: 16px;
