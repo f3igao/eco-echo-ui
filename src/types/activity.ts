@@ -1,4 +1,4 @@
-export interface IActivity {
+export type Activity = {
   activity_id?: number;
   park_id: number;
   name: string;

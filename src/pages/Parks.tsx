@@ -13,7 +13,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { validateMinLength } from '@/lib/form-validations';
-import { IPark } from '@/models/park.interface';
+import { Park } from '@/types/park';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
@@ -90,7 +90,7 @@ function Parks() {
       <div className='flex mb-7 justify-between'>
         <ul className='flex flex-wrap gap-4 justify-between w-2/3'>
           {data.parks.map(
-            ({ park_id, name, description, location, website }: IPark) => (
+            ({ park_id, name, description, location, website }: Park) => (
               <ParkCard
                 key={park_id}
                 name={name}

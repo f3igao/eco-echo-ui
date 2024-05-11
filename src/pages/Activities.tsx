@@ -17,7 +17,7 @@ import {
   validateMinLength,
   validateRange,
 } from '@/lib/form-validations';
-import { IActivity } from '@/models/activity.interface';
+import { Activity } from '@/types/activity';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pencil } from 'lucide-react';
@@ -82,8 +82,9 @@ function Activities() {
   };
 
   const onEdit = (id: number) => {
-    
+    console.log(id);
   };
+
   return isLoading ? (
     <Loading />
   ) : (
@@ -99,7 +100,7 @@ function Activities() {
               duration,
               difficulty,
               require_special_equipment,
-            }: IActivity) => (
+            }: Activity) => (
               <div className='flex gap-x-2 items-center' key={activity_id}>
                 <li>
                   <span>{name} |</span>

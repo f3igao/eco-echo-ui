@@ -1,4 +1,4 @@
-import { IActivity } from '@/models/activity.interface';
+import { Activity } from '@/types/activity';
 import axios from 'axios';
 
 export function getActivities() {
@@ -13,15 +13,15 @@ export function getActivity(id: number) {
     .then((res) => res.data);
 }
 
-export function createActivity(activity: IActivity) {
+export function createActivity(activity: Activity) {
   return axios
     .post('http://127.0.0.1:5000/activities', activity)
     .then((res) => res.data);
 }
 
-export function updateActivity(id: number, { name, description }: IActivity) {
+export function updateActivity(id: number, { name, description }: Activity) {
   return axios
-    .put<IActivity>(`http://127.0.0.1:5000/activities/${id}`, {
+    .put<Activity>(`http://127.0.0.1:5000/activities/${id}`, {
       name,
       description,
     })

@@ -1,6 +1,6 @@
-import { IPark } from '@/models/park.interface';
+import { Park } from '@/types/park';
 
-export const MOCK_PARKS: IPark[] = [
+export const MOCK_PARKS: Park[] = [
   {
     park_id: 1,
     name: 'Acadia National Park',

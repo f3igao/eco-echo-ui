@@ -1,4 +1,4 @@
-import { IWishlist } from '@/models/wishlist.interface';
+import { Wishlist } from '@/types/wishlist';
 import axios from 'axios';
 
 export function getWishlists() {
@@ -17,7 +17,7 @@ export function getWishlistsByUserId(userId: number) {
     .then((res) => res.data);
 }
 
-export function createWishlist({ user_id, activity_id }: IWishlist) {
+export function createWishlist({ user_id, activity_id }: Wishlist) {
   return axios
     .post('http://127.0.0.1:5000/wishlists', {
       user_id,
@@ -29,10 +29,10 @@ export function createWishlist({ user_id, activity_id }: IWishlist) {
 
 export function updateWishlist(
   id: number,
-  { user_id, activity_id }: IWishlist
+  { user_id, activity_id }: Wishlist
 ) {
   return axios
-    .put<IWishlist>(`http://127.0.0.1:5000/wishlists/${id}`, {
+    .put<Wishlist>(`http://127.0.0.1:5000/wishlists/${id}`, {
       user_id,
       activity_id,
     })

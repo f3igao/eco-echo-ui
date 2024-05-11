@@ -1,4 +1,4 @@
-export interface IPark {
+export type Park = {
   park_id?: number;
   name: string;
   location: string;
@@ -10,4 +10,4 @@ export interface IPark {
   entrance_info: string;
   created_at?: string;
   updated_at?: string;
-}
+};
