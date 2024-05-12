@@ -87,7 +87,7 @@ function Parks() {
         </Button>
       </div> */}
       <h2 className='text-3xl font-bold text-text'>Parks</h2>
-      <div className='flex mb-7 justify-between'>
+      <div className='flex my-7 justify-between'>
         <ul className='flex flex-wrap gap-4 justify-between w-2/3'>
           {data.parks.map(
             ({ park_id, name, description, location, website }: Park) => (

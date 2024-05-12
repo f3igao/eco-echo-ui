@@ -10,12 +10,10 @@ import Link from 'next/link';
 export function MainNav() {
   return (
     <div className='flex justify-between items-center p-2'>
-      <div className='flex gap-x-3 cursor-pointer mx-3 items-center'>
+      <Link href='/' className='flex gap-x-3 cursor-pointer mx-3 items-center'>
         <img src='public/logo.svg' className='w-12' alt='logo' />
-        <p className='text-text font-semibold text-2xl'>
-          <Link href='/'>Eco Echo</Link>
-        </p>
-      </div>
+        <p className='text-text font-semibold text-2xl'>Eco Echo</p>
+      </Link>
 
       <NavigationMenu>
         <NavigationMenuList>

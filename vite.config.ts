@@ -17,4 +17,13 @@ export default defineConfig({
     // resolves console warning for files does not exist in the optimize deps directory; dependency might be incompatible with the dep optimizer
     exclude: ['chunk-bk36ksef.js'],
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:5000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 });

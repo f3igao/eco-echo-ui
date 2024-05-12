@@ -34,7 +34,7 @@ function Layout() {
   return (
     <div className='flex flex-col h-screen'>
       <MainNav />
-      <div className='flex-grow flex items-center justify-center p-2'>
+      <div className='flex-grow py-4 px-8'>
         <Outlet />
       </div>
     </div>

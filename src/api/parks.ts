@@ -3,26 +3,24 @@ import axios from 'axios';
 
 export function getParks() {
   return axios
-    .get('http://127.0.0.1:5000/parks', {
+    .get('api/parks', {
       params: { _sort: 'created_on', _order: 'desc' },
     })
     .then((res) => res.data);
 }
 
 export function getPark(id: number) {
-  return axios.get(`http://127.0.0.1:5000/parks/${id}`).then((res) => res.data);
+  return axios.get(`api/parks/${id}`).then((res) => res.data);
 }
 
 export function createPark(park: Park) {
   console.log(JSON.stringify(park));
-  return axios
-    .post('http://127.0.0.1:5000/parks', park)
-    .then((res) => res.data);
+  return axios.post('api/parks', park).then((res) => res.data);
 }
 
 export function updatePark(id: number, { name, location }: Park) {
   return axios
-    .put<Park>(`http://127.0.0.1:5000/parks/${id}`, {
+    .put<Park>(`api/parks/${id}`, {
       name,
       location,
     })
@@ -30,14 +28,12 @@ export function updatePark(id: number, { name, location }: Park) {
 }
 
 export function deletePark(id: number) {
-  return axios
-    .delete(`http://127.0.0.1:5000/parks/${id}`)
-    .then((res) => res.data);
+  return axios.delete(`api/parks/${id}`).then((res) => res.data);
 }
 
 // export function getParksPaginated(page) {
 //   return axios
-//     .get("http://127.0.0.1:5000/parks", {
+//     .get("api/parks", {
 //       params: { _page: page, _sort: "title", _limit: 2 },
 //     })
 //     .then(res => {
