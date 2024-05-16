@@ -13,24 +13,17 @@ function Parks() {
   return isLoading ? (
     <Loading />
   ) : (
-    <ol className='flex flex-wrap gap-6 p-6'>
-      {data.parks.map(
-        (
-          { park_id, name, description, location, website }: Park,
-          index: number
-        ) => (
-          <li key={park_id}>
-            <ParkCard
-              index={index + 1}
-              id={park_id!}
-              name={name}
-              description={description}
-              location={location}
-              website={website}
-            ></ParkCard>
-          </li>
-        )
-      )}
+    <ol className='flex flex-wrap gap-6 px-10'>
+      {data.parks.map(({ park_id, name, location }: Park, index: number) => (
+        <li key={park_id}>
+          <ParkCard
+            index={index + 1}
+            id={park_id!}
+            name={name}
+            location={location}
+          ></ParkCard>
+        </li>
+      ))}
     </ol>
   );
 }

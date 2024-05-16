@@ -2,6 +2,7 @@ import { getParkBgImgUrl } from '@/lib/utils';
 import classNames from 'classnames';
 import { Bookmark, CircleCheckBig } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -16,20 +17,12 @@ interface ParkCardProps {
   id: number;
   name: string;
   location: string;
-  description: string;
-  website: string;
 }
 
-function ParkCard({
-  index,
-  id,
-  name,
-  location,
-  description,
-  website,
-}: ParkCardProps) {
+function ParkCard({ index, id, name, location }: ParkCardProps) {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [haveBeen, setHaveBeen] = useState(false);
+  const navigate = useNavigate();
 
   // TODO: bookmark and have been only shows up for logged in users
   const isLoggedIn = true;
@@ -37,10 +30,13 @@ function ParkCard({
 
   return (
     <Card
+      onClick={() => {
+        navigate(`/parks/${id}`);
+      }}
       className={classNames(
         'w-80 h-72 relative bg-cover cursor-pointer',
         getParkBgImgUrl(name),
-        // `bg-[url('src/assets/park-cover-photos/biscayne.jpeg')]`,
+        // `bg-[url('src/assets/park-cover-photos/zion.jpeg')]`,
         { 'grayscale-[75%] hover:grayscale-0': isWishlist && !haveBeen }
       )}
     >
@@ -56,7 +52,7 @@ function ParkCard({
           />
         )}
       </CardHeader>
-      <CardContent className='flex flex-col justify-center items-center h-4/5 text-center w-full'>
+      <CardContent className='flex flex-col justify-center items-center h-5/6 text-center w-full'>
         <CardTitle className='text-3xl text-white font-bold'>{name}</CardTitle>
         <CardDescription className='text-white text-lg font-semibold'>
           {location}
