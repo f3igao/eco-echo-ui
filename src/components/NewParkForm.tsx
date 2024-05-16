@@ -28,7 +28,7 @@ const formSchema = z.object({
   entranceInfo: z.string(),
 });
 
-function NewPark() {
+function NewParkForm() {
   const { setQueryData, invalidateQueries } = useQueryClient();
 
   const { mutate, isPending } = useMutation({
@@ -145,4 +145,4 @@ function NewPark() {
   );
 }
 
-export default NewPark;
+export default NewParkForm;
