@@ -1,8 +1,7 @@
-import { deletePark } from '@/api/parks';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Heart, X } from 'lucide-react';
+import { getParkBgImgUrl } from '@/lib/utils';
+import classNames from 'classnames';
+import { Bookmark, CircleCheckBig } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from './ui/button';
 import {
   Card,
   CardContent,
@@ -13,6 +12,7 @@ import {
 } from './ui/card';
 
 interface ParkCardProps {
+  index: number;
   id: number;
   name: string;
   location: string;
@@ -20,55 +20,61 @@ interface ParkCardProps {
   website: string;
 }
 
-function ParkCard({ id, name, location, description, website }: ParkCardProps) {
-  const [isLiked, setIsLiked] = useState(false);
+function ParkCard({
+  index,
+  id,
+  name,
+  location,
+  description,
+  website,
+}: ParkCardProps) {
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [haveBeen, setHaveBeen] = useState(false);
 
-  const { invalidateQueries } = useQueryClient();
-  const { mutate, isPending } = useMutation({
-    mutationFn: deletePark,
-    onSuccess: () => {
-      invalidateQueries({ queryKey: ['parks'], exact: true });
-    },
-  });
-
-  const onDelete = () => {
-    mutate(id);
-  };
+  // TODO: bookmark and have been only shows up for logged in users
+  const isLoggedIn = true;
+  const isWishlist = true;
 
   return (
-    <Card className='w-80 relative'>
-      <CardHeader className='flex flex-row justify-between'>
-        <div className='flex flex-col'>
-          <CardTitle className='text-xl'>{name}</CardTitle>
-          <CardDescription>{location}</CardDescription>
-        </div>
-        <X
-          // fill={isLiked ? 'red' : 'none'}
-          // stroke={isLiked ? 'red' : '#606C38'}
-          className='h-4 w-4 cursor-pointer hover:text-accent'
-          onClick={onDelete}
-        />
+    <Card
+      className={classNames(
+        'w-80 h-72 relative bg-cover cursor-pointer',
+        getParkBgImgUrl(name),
+        // `bg-[url('src/assets/park-cover-photos/biscayne.jpeg')]`,
+        { 'grayscale-[75%] hover:grayscale-0': isWishlist && !haveBeen }
+      )}
+    >
+      <CardHeader className='flex flex-row justify-between w-full p-0'>
+        <span className='text-white font-bold mx-2 border-b-2'>{index}</span>
+        {isLoggedIn && (
+          <Bookmark
+            fill={isBookmarked ? 'white' : 'none'}
+            className='h-4 w-4 cursor-pointer text-white hover:fill-white m-3'
+            onClick={() => {
+              setIsBookmarked(!isBookmarked);
+            }}
+          />
+        )}
       </CardHeader>
-      <CardContent className='h-32 mb-16 overflow-auto'>
-        <p>{description}</p>
+      <CardContent className='flex flex-col justify-center items-center h-4/5 text-center w-full'>
+        <CardTitle className='text-3xl text-white font-bold'>{name}</CardTitle>
+        <CardDescription className='text-white text-lg font-semibold'>
+          {location}
+        </CardDescription>
       </CardContent>
-      <CardFooter className='flex justify-between absolute bottom-0 w-full p-3'>
-        <Button variant='ghost'>
-          <a
-            target='_blank'
-            href={website}
-            className='text-accent hover:text-background'
-          >
-            More Info
-          </a>
-        </Button>
-        <Heart
-          fill={isLiked ? 'red' : 'none'}
-          className='h-4 w-4 cursor-pointer hover:text-red-500 m-3'
-          onClick={() => {
-            setIsLiked(!isLiked);
-          }}
-        />
+      <CardFooter className='flex justify-end w-full p-0 absolute bottom-0'>
+        {isLoggedIn && (
+          <CircleCheckBig
+            fill={haveBeen ? 'green' : 'none'}
+            className={classNames(
+              'h-4 w-4 cursor-pointer hover:fill-primary m-3 hover:text-[green-400]',
+              haveBeen ? 'text-green-400' : 'text-white'
+            )}
+            onClick={() => {
+              setHaveBeen(!haveBeen);
+            }}
+          />
+        )}
       </CardFooter>
     </Card>
   );

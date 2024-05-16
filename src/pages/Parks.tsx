@@ -13,31 +13,25 @@ function Parks() {
   return isLoading ? (
     <Loading />
   ) : (
-    <>
-      {/* <div className='flex gap-x-4 items-center mb-7'>
-        <h2 className='text-3xl font-bold text-text'>Parks</h2>
-        <Button className='rounded-full h-8 w-8 p-0 bg-accent'>
-          <Plus />
-        </Button>
-      </div> */}
-      <h2 className='text-3xl font-bold text-text'>Parks</h2>
-      {/* <div className='flex my-7 justify-between'> */}
-      <ul className='flex flex-wrap gap-4 justify-between w-2/3'>
-        {data.parks.map(
-          ({ park_id, name, description, location, website }: Park) => (
+    <ol className='flex flex-wrap gap-6 p-6'>
+      {data.parks.map(
+        (
+          { park_id, name, description, location, website }: Park,
+          index: number
+        ) => (
+          <li key={park_id}>
             <ParkCard
-              key={park_id}
+              index={index + 1}
+              id={park_id!}
               name={name}
               description={description}
               location={location}
               website={website}
-              id={park_id!}
             ></ParkCard>
-          )
-        )}
-      </ul>
-      {/* </div> */}
-    </>
+          </li>
+        )
+      )}
+    </ol>
   );
 }
 

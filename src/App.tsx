@@ -6,7 +6,7 @@ import ActivityDetails from './pages/ActivityDetails';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import ParkDetails from './pages/ParkDetails';
-import Parks from './pages/Parks.1';
+import Parks from './pages/Parks';
 import SignUp from './pages/SignUp';
 import Users from './pages/Users';
 

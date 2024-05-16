@@ -9,10 +9,15 @@ function Home() {
         Your Ultimate Hub for Park Exploration and Community Engagement
       </p>
       <div className='flex items-center gap-x-3 mt-6'>
-        <Button>
+        <Button className='border-primary'>
           <Link href='signup'>Sign Up</Link>
         </Button>
-        <Button variant='outline'>Log In</Button>
+        <Button
+          className='hover:border-accent text-primary hover:text-primary'
+          variant='outline'
+        >
+          Log In
+        </Button>
       </div>
     </div>
   );
