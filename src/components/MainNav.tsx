@@ -19,7 +19,7 @@ export function MainNav() {
         <NavigationMenuList>
           {/* <NavigationMenuItem>
             <NavigationMenuLink
-              href='wishlists'
+              href='/wishlists'
               className={navigationMenuTriggerStyle()}
             >
               Wishlists
@@ -27,7 +27,7 @@ export function MainNav() {
           </NavigationMenuItem> */}
           <NavigationMenuItem>
             <NavigationMenuLink
-              href='parks'
+              href='/parks'
               className={navigationMenuTriggerStyle()}
             >
               Parks
@@ -35,7 +35,7 @@ export function MainNav() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink
-              href='activities'
+              href='/activities'
               className={navigationMenuTriggerStyle()}
             >
               Activities
@@ -51,7 +51,7 @@ export function MainNav() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink
-              href='account'
+              href='/account'
               className={navigationMenuTriggerStyle()}
             >
               Account
