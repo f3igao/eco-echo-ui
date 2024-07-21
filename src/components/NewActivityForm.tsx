@@ -10,16 +10,16 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { Form } from 'react-router-dom';
 import { z } from 'zod';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from './ui/form';
-import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 const formSchema = z.object({
   name: validateMinLength(2, 'Name must be at least 2 characters.'),

@@ -14,14 +14,9 @@ function Parks() {
     <Loading />
   ) : (
     <ol className='flex flex-wrap gap-6 px-10'>
-      {data.parks.map(({ park_id, name, location }: Park, index: number) => (
-        <li key={park_id}>
-          <ParkCard
-            index={index + 1}
-            id={park_id!}
-            name={name}
-            location={location}
-          ></ParkCard>
+      {data.parks.map((park: Park, index: number) => (
+        <li key={park.park_id}>
+          <ParkCard index={index + 1} park={park} />
         </li>
       ))}
     </ol>
