@@ -11,20 +11,12 @@ export function MainNav() {
   return (
     <div className='flex justify-between items-center p-2'>
       <Link href='/' className='flex gap-x-3 cursor-pointer mx-3 items-center'>
-        <img src='public/logo.svg' className='w-12' alt='logo' />
+        <img src='./logo.svg' className='w-12' alt='logo' />
         <p className='text-text font-semibold text-2xl'>Eco Echo</p>
       </Link>
 
       <NavigationMenu>
         <NavigationMenuList>
-          {/* <NavigationMenuItem>
-            <NavigationMenuLink
-              href='/wishlists'
-              className={navigationMenuTriggerStyle()}
-            >
-              Wishlists
-            </NavigationMenuLink>
-          </NavigationMenuItem> */}
           <NavigationMenuItem>
             <NavigationMenuLink
               href='/parks'
@@ -47,6 +39,14 @@ export function MainNav() {
               className={navigationMenuTriggerStyle()}
             >
               Users
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink
+              href='/wishlists'
+              className={navigationMenuTriggerStyle()}
+            >
+              Wishlists
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
