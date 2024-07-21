@@ -9,7 +9,12 @@ import {
 import { Park } from '@/types/park';
 import classNames from 'classnames';
 import { kebabCase } from 'lodash';
-import { Bookmark, CircleCheckBig } from 'lucide-react';
+import {
+  ArrowUpRight,
+  Bookmark,
+  CircleCheckBig,
+  SquareArrowOutUpRight,
+} from 'lucide-react';
 import { useState } from 'react';
 import {
   Card,
@@ -111,8 +116,12 @@ function ParkCard({ index, park }: ParkCardProps) {
         <div>Entrance Info: {entranceInfo}</div>
         <div className='flex items-center gap-x-1'>
           <span>Learn more at</span>
-          <a href={website} className='underline hover:text-accent'>
-            {website}
+          <a
+            href={website}
+            className='group underline hover:text-accent inline-flex'
+          >
+            <span>{website}</span>
+            <ArrowUpRight className='h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 translate-y-1 ml-0.5' />
           </a>
         </div>
       </DialogContent>
