@@ -1,3 +1,4 @@
+import { signUp } from '@/api/users';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -9,7 +10,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { validateEmail, validateMinLength } from '@/lib/form-validations';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
 const formSchema = z.object({
@@ -19,6 +23,8 @@ const formSchema = z.object({
 });
 
 function SignUp() {
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -28,8 +34,22 @@ function SignUp() {
     },
   });
 
+  const mutation = useMutation({
+    mutationFn: signUp,
+    onSuccess: () => {
+      navigate('/');
+    },
+    onError: (error: unknown) => {
+      const message =
+        axios.isAxiosError(error) && error.response?.data?.message
+          ? error.response.data.message
+          : 'Something went wrong. Please try again.';
+      form.setError('root', { message });
+    },
+  });
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    mutation.mutate(values);
   };
 
   return (
@@ -76,7 +96,14 @@ function SignUp() {
               </FormItem>
             )}
           />
-          <Button type='submit'>Submit</Button>
+          {form.formState.errors.root && (
+            <p className='text-sm font-medium text-destructive'>
+              {form.formState.errors.root.message}
+            </p>
+          )}
+          <Button type='submit' disabled={mutation.isPending}>
+            {mutation.isPending ? 'Signing up...' : 'Sign Up'}
+          </Button>
         </form>
       </Form>
     </div>

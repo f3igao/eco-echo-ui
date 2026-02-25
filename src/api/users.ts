@@ -1,5 +1,15 @@
-import { User } from '@/types/user';
+import type { User } from '@/types/user';
 import axios from 'axios';
+
+export type SignUpData = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+export function signUp(data: SignUpData) {
+  return axios.post<User>('/api/auth/register', data).then((res) => res.data);
+}
 
 export function getUsers() {
   return axios
