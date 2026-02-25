@@ -8,8 +8,6 @@ import NotFound from './pages/NotFound';
 import ParkDetails from './pages/ParkDetails';
 import Parks from './pages/Parks';
 import SignUp from './pages/SignUp';
-import Users from './pages/Users';
-
 export default function App() {
   return (
     <Routes>
@@ -22,7 +20,6 @@ export default function App() {
         {/* <Route path='/wishlists/:wishlist_id' element={<WishlistDetails/>} /> */}
         <Route path='/activities' element={<Activities />} />
         <Route path='/activities/:activity_id' element={<ActivityDetails />} />
-        <Route path='/users' element={<Users />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='*' element={<NotFound />} />
       </Route>
