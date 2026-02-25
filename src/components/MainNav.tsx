@@ -11,7 +11,7 @@ export function MainNav() {
   return (
     <div className='flex justify-between items-center p-2'>
       <Link href='/' className='flex gap-x-3 cursor-pointer mx-3 items-center'>
-        <img src='./logo.svg' className='w-12' alt='logo' />
+        <img src='/logo.svg' className='w-12' alt='logo' />
         <p className='text-text font-semibold text-2xl'>Eco Echo</p>
       </Link>
 

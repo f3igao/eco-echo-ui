@@ -9,12 +9,7 @@ import {
 import { Park } from '@/types/park';
 import classNames from 'classnames';
 import { kebabCase } from 'lodash';
-import {
-  ArrowUpRight,
-  Bookmark,
-  CircleCheckBig,
-  SquareArrowOutUpRight,
-} from 'lucide-react';
+import { ArrowUpRight, Bookmark, CircleCheckBig } from 'lucide-react';
 import { useState } from 'react';
 import {
   Card,
@@ -24,6 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from './ui/card';
+import ParkDetails from '@/pages/ParkDetails';
 
 interface ParkCardProps {
   index: number;
@@ -32,7 +28,7 @@ interface ParkCardProps {
 
 function ParkCard({ index, park }: ParkCardProps) {
   const {
-    park_id,
+    park_id: parkId,
     name,
     location,
     description,
@@ -101,9 +97,12 @@ function ParkCard({ index, park }: ParkCardProps) {
         </Card>
       </DialogTrigger>
       <DialogContent className='max-w-[640px]'>
+        <ParkDetails />
+      </DialogContent>
+      {/* <DialogContent className='max-w-[640px]'>
         <DialogHeader>
           <DialogTitle>
-            <a className='hover:text-primary' href={`/parks/${park_id}`}>
+            <a className='hover:text-primary' href={`/parks/${parkId}`}>
               {name}
             </a>
           </DialogTitle>
@@ -124,7 +123,7 @@ function ParkCard({ index, park }: ParkCardProps) {
             <ArrowUpRight className='h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 translate-y-1 ml-0.5' />
           </a>
         </div>
-      </DialogContent>
+      </DialogContent> */}
     </Dialog>
   );
 }

@@ -1,5 +1,5 @@
 export type Park = {
-  park_id?: number;
+  park_id: number;
   name: string;
   location: string;
   description: string;
