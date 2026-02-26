@@ -7,8 +7,17 @@ export type SignUpData = {
   password: string;
 };
 
+export type LoginData = {
+  email: string;
+  password: string;
+};
+
 export function signUp(data: SignUpData) {
   return axios.post<User>('/api/auth/register', data).then((res) => res.data);
+}
+
+export function login(data: LoginData) {
+  return axios.post<User>('/api/auth/login', data).then((res) => res.data);
 }
 
 export function getUsers() {

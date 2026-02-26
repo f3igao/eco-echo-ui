@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import ParkDetails from './pages/ParkDetails';
 import Parks from './pages/Parks';
+import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
         <Route path='/activities' element={<Activities />} />
         <Route path='/activities/:activity_id' element={<ActivityDetails />} />
         <Route path='/signup' element={<SignUp />} />
+        <Route path='/login' element={<Login />} />
         <Route path='*' element={<NotFound />} />
       </Route>
     </Routes>

@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 
 function Home() {
   return (
@@ -9,14 +9,15 @@ function Home() {
         Your Ultimate Hub for Park Exploration and Community Engagement
       </p>
       <div className='flex items-center gap-x-3 mt-6'>
-        <Button className='border-primary'>
-          <Link href='signup'>Sign Up</Link>
+        <Button asChild className='border-primary'>
+          <Link to='/signup'>Sign Up</Link>
         </Button>
         <Button
+          asChild
           className='hover:border-accent text-primary hover:text-primary'
           variant='outline'
         >
-          Log In
+          <Link to='/login'>Log In</Link>
         </Button>
       </div>
     </div>
