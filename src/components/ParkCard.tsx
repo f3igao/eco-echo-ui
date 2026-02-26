@@ -1,16 +1,15 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import { Park } from '@/types/park';
 import classNames from 'classnames';
 import { kebabCase } from 'lodash';
-import { ArrowUpRight, Bookmark, CircleCheckBig } from 'lucide-react';
-import { useState } from 'react';
+import { Bookmark, CircleCheckBig } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import ParkCardSkeleton from './ParkCardSkeleton';
 import {
   Card,
   CardContent,
@@ -40,6 +39,19 @@ function ParkCard({ index, park }: ParkCardProps) {
   } = park;
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [haveBeen, setHaveBeen] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const { ref, isVisible } = useIntersectionObserver<HTMLDivElement>({
+    rootMargin: '100px',
+  });
+
+  useEffect(() => {
+    if (!isVisible) return;
+    const img = new Image();
+    img.src = `/park-cover-photos/${kebabCase(name)}.jpg`;
+    img.onload = () => setImageLoaded(true);
+    img.onerror = () => setImageLoaded(true);
+  }, [isVisible, name]);
 
   // TODO: bookmark and have been only shows up for logged in users
   const isLoggedIn = true;
@@ -48,12 +60,19 @@ function ParkCard({ index, park }: ParkCardProps) {
   const backgroundImage = `url('/park-cover-photos/${kebabCase(name)}.jpg')`;
 
   return (
+    <div ref={ref}>
+      {!imageLoaded ? (
+        <ParkCardSkeleton />
+      ) : (
     <Dialog>
       <DialogTrigger asChild>
         <Card
-          className={classNames('w-80 h-72 relative bg-cover cursor-pointer', {
-            'grayscale-[75%] hover:grayscale-0': isWishlist && !haveBeen,
-          })}
+          className={classNames(
+            'w-80 h-72 relative bg-cover cursor-pointer transition-opacity duration-500 opacity-100',
+            {
+              'grayscale-[75%] hover:grayscale-0': isWishlist && !haveBeen,
+            }
+          )}
           style={{ backgroundImage }}
         >
           <CardHeader className='flex flex-row justify-between w-full p-0'>
@@ -125,6 +144,8 @@ function ParkCard({ index, park }: ParkCardProps) {
         </div>
       </DialogContent> */}
     </Dialog>
+      )}
+    </div>
   );
 }
 
