@@ -8,11 +8,10 @@ function Activities() {
   const { data, isLoading } = useQuery({
     queryKey: ['activities'],
     queryFn: getActivities,
+    staleTime: 5 * 60 * 1000,
   });
 
-  const onEdit = (id: number) => {
-    console.log(id);
-  };
+  const onEdit = (_id: number) => {};
 
   return isLoading ? (
     <Loading />
@@ -27,23 +26,19 @@ function Activities() {
           difficulty,
           require_special_equipment,
         }: Activity) => (
-          <div className='flex gap-x-2 items-center' key={activity_id}>
-            <li>
-              <span>{name} |</span>
-              <span>{description} |</span>
-              <span>duration: {duration} |</span>
-              <span>difficulty: {difficulty} |</span>
-              {require_special_equipment && (
-                <span>Special Equiment Required</span>
-              )}
-            </li>
+          <li className='flex gap-x-2 items-center' key={activity_id}>
+            <span>{name} |</span>
+            <span>{description} |</span>
+            <span>duration: {duration} |</span>
+            <span>difficulty: {difficulty} |</span>
+            {require_special_equipment && (
+              <span>Special Equipment Required</span>
+            )}
             <Pencil
-              className='w-4 h-4'
-              onClick={() => {
-                onEdit(activity_id!);
-              }}
+              className='w-4 h-4 cursor-pointer'
+              onClick={() => onEdit(activity_id!)}
             />
-          </div>
+          </li>
         )
       )}
     </ul>

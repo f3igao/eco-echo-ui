@@ -5,8 +5,13 @@ import {
 } from '@/components/ui/dialog';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import { Park } from '@/types/park';
-import classNames from 'classnames';
-import { kebabCase } from 'lodash';
+import { clsx } from 'clsx';
+
+const kebabCase = (str: string) =>
+  str
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_]+/g, '-');
 import { Bookmark, CircleCheckBig } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import ParkCardSkeleton from './ParkCardSkeleton';
@@ -67,7 +72,7 @@ function ParkCard({ index, park }: ParkCardProps) {
     <Dialog>
       <DialogTrigger asChild>
         <Card
-          className={classNames(
+          className={clsx(
             'w-80 h-72 relative bg-cover cursor-pointer transition-opacity duration-500 opacity-100',
             {
               'grayscale-[75%] hover:grayscale-0': isWishlist && !haveBeen,
@@ -102,7 +107,7 @@ function ParkCard({ index, park }: ParkCardProps) {
             {isLoggedIn && (
               <CircleCheckBig
                 fill={haveBeen ? 'green' : 'none'}
-                className={classNames(
+                className={clsx(
                   'h-4 w-4 cursor-pointer hover:fill-primary m-3 hover:text-[green-400]',
                   haveBeen ? 'text-green-400' : 'text-white'
                 )}

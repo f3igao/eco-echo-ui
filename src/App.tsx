@@ -1,14 +1,18 @@
+import { lazy, Suspense } from 'react';
 import { Outlet, Route, Routes } from 'react-router-dom';
 import { MainNav } from './components/MainNav';
-import Account from './pages/Account';
-import Activities from './pages/Activities';
-import ActivityDetails from './pages/ActivityDetails';
-import Home from './pages/Home';
-import NotFound from './pages/NotFound';
-import ParkDetails from './pages/ParkDetails';
-import Parks from './pages/Parks';
-import Login from './pages/Login';
-import SignUp from './pages/SignUp';
+import Loading from './components/Loading';
+
+const Account = lazy(() => import('./pages/Account'));
+const Activities = lazy(() => import('./pages/Activities'));
+const ActivityDetails = lazy(() => import('./pages/ActivityDetails'));
+const Home = lazy(() => import('./pages/Home'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+const ParkDetails = lazy(() => import('./pages/ParkDetails'));
+const Parks = lazy(() => import('./pages/Parks'));
+const Login = lazy(() => import('./pages/Login'));
+const SignUp = lazy(() => import('./pages/SignUp'));
+
 export default function App() {
   return (
     <Routes>
@@ -34,7 +38,9 @@ function Layout() {
     <div className='flex flex-col h-screen'>
       <MainNav />
       <div className='flex-grow py-4 px-8'>
-        <Outlet />
+        <Suspense fallback={<Loading />}>
+          <Outlet />
+        </Suspense>
       </div>
     </div>
   );

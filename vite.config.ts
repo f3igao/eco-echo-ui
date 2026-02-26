@@ -13,9 +13,23 @@ export default defineConfig({
   define: {
     'process.env': {},
   },
-  optimizeDeps: {
-    // resolves console warning for files does not exist in the optimize deps directory; dependency might be incompatible with the dep optimizer
-    exclude: ['chunk-bk36ksef.js'],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-query': ['@tanstack/react-query'],
+          'vendor-radix': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-navigation-menu',
+            '@radix-ui/react-label',
+            '@radix-ui/react-checkbox',
+            '@radix-ui/react-slot',
+          ],
+          'vendor-form': ['react-hook-form', '@hookform/resolvers', 'zod'],
+        },
+      },
+    },
   },
   server: {
     proxy: {

@@ -5,12 +5,12 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 
 export function MainNav() {
   return (
     <div className='flex justify-between items-center p-2'>
-      <Link href='/' className='flex gap-x-3 cursor-pointer mx-3 items-center'>
+      <Link to='/' className='flex gap-x-3 cursor-pointer mx-3 items-center'>
         <img src='/logo.svg' className='w-12' alt='logo' />
         <p className='text-text font-semibold text-2xl'>Eco Echo</p>
       </Link>
@@ -18,43 +18,38 @@ export function MainNav() {
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuLink
-              href='/parks'
-              className={navigationMenuTriggerStyle()}
-            >
-              Parks
+            <NavigationMenuLink asChild>
+              <Link to='/parks' className={navigationMenuTriggerStyle()}>
+                Parks
+              </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuLink
-              href='/activities'
-              className={navigationMenuTriggerStyle()}
-            >
-              Activities
+            <NavigationMenuLink asChild>
+              <Link to='/activities' className={navigationMenuTriggerStyle()}>
+                Activities
+              </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuLink
-              href='users'
-              className={navigationMenuTriggerStyle()}
-            >
-              Users
+            <NavigationMenuLink asChild>
+              <Link to='/users' className={navigationMenuTriggerStyle()}>
+                Users
+              </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuLink
-              href='/wishlists'
-              className={navigationMenuTriggerStyle()}
-            >
-              Wishlists
+            <NavigationMenuLink asChild>
+              <Link to='/wishlists' className={navigationMenuTriggerStyle()}>
+                Wishlists
+              </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuLink
-              href='/account'
-              className={navigationMenuTriggerStyle()}
-            >
-              Account
+            <NavigationMenuLink asChild>
+              <Link to='/account' className={navigationMenuTriggerStyle()}>
+                Account
+              </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
