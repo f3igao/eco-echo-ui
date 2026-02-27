@@ -484,83 +484,6 @@ function PasswordSection() {
   );
 }
 
-function WishlistSection({ userId }: { userId: number }) {
-  const { wishlists, isLoading, toggleWishlist, isToggling } = useWishlist(userId);
-
-  const parkQueries = useQueries({
-    queries: wishlists.map((w) => ({
-      queryKey: ['parks', w.park_id],
-      queryFn: () => getPark(w.park_id).then((res: { park: Park }) => res.park ?? res),
-      staleTime: 10 * 60 * 1000,
-    })),
-  });
-
-  return (
-    <Card>
-      <CardHeader className='pb-3'>
-        <CardTitle className='flex items-center gap-2 text-text'>
-          <Bookmark className='w-5 h-5 text-primary' /> Wishlist
-        </CardTitle>
-        <CardDescription>Parks you want to visit</CardDescription>
-      </CardHeader>
-      <CardContent>
-        {isLoading && (
-          <p className='text-sm text-muted-foreground'>Loading wishlist...</p>
-        )}
-
-        {!isLoading && wishlists.length === 0 && (
-          <p className='text-sm text-muted-foreground'>
-            No parks saved yet — bookmark a park to add it here.
-          </p>
-        )}
-
-        {wishlists.length > 0 && (
-          <div className='flex flex-col gap-2'>
-            {wishlists.map((wishlist: Wishlist, i: number) => {
-              const park = parkQueries[i]?.data as Park | undefined;
-              return (
-                <Dialog key={wishlist.wishlist_id}>
-                  <div className='flex items-center gap-3 rounded-lg border bg-background p-3'>
-                    <div className='flex-1 min-w-0'>
-                      <DialogTrigger asChild>
-                        <button type='button' className='text-left w-full'>
-                          <p className='text-sm font-medium text-text hover:text-primary transition-colors truncate'>
-                            {park?.name ?? `Park #${wishlist.park_id}`}
-                          </p>
-                          {park?.location && (
-                            <p className='text-xs text-muted-foreground flex items-center gap-1 mt-0.5'>
-                              <MapPin className='w-3 h-3 shrink-0' />
-                              {park.location}
-                            </p>
-                          )}
-                        </button>
-                      </DialogTrigger>
-                    </div>
-                    <button
-                      type='button'
-                      onClick={() => toggleWishlist(wishlist.park_id)}
-                      disabled={isToggling}
-                      className='shrink-0 text-muted-foreground hover:text-destructive transition-colors disabled:opacity-50'
-                      title='Remove from wishlist'
-                    >
-                      <BookmarkX className='w-4 h-4' />
-                    </button>
-                  </div>
-                  {park && (
-                    <DialogContent className='max-w-[640px]'>
-                      <ParkDetails park={park} />
-                    </DialogContent>
-                  )}
-                </Dialog>
-              );
-            })}
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
-
 function DangerZone() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -631,7 +554,6 @@ function Account() {
     <div className='max-w-2xl mx-auto py-8 flex flex-col gap-6'>
       <h2 className='text-2xl font-bold text-text'>Account</h2>
       <PassportSection userId={MOCK_USER.user_id} />
-      <WishlistSection userId={MOCK_USER.user_id} />
       <ProfileSection user={MOCK_USER} />
       <PasswordSection />
       <DangerZone />
