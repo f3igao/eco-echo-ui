@@ -12,6 +12,7 @@ const ParkDetails = lazy(() => import('./pages/ParkDetails'));
 const Parks = lazy(() => import('./pages/Parks'));
 const Login = lazy(() => import('./pages/Login'));
 const SignUp = lazy(() => import('./pages/SignUp'));
+const Users = lazy(() => import('./pages/Users'));
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
         {/* <Route path='/wishlists/:wishlist_id' element={<WishlistDetails/>} /> */}
         <Route path='/activities' element={<Activities />} />
         <Route path='/activities/:activity_id' element={<ActivityDetails />} />
+        <Route path='/users' element={<Users />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/login' element={<Login />} />
         <Route path='*' element={<NotFound />} />
