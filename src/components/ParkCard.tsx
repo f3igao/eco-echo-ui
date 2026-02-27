@@ -1,19 +1,10 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import type { Park } from '@/types/park';
 import { clsx } from 'clsx';
-
-const kebabCase = (str: string) =>
-  str
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_]+/g, '-');
 import { Bookmark, CircleCheckBig } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import ParkDetails from '@/pages/ParkDetails';
 import ParkCardSkeleton from './ParkCardSkeleton';
 import {
   Card,
@@ -23,26 +14,30 @@ import {
   CardHeader,
   CardTitle,
 } from './ui/card';
-import ParkDetails from '@/pages/ParkDetails';
+
+const kebabCase = (str: string) =>
+  str
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_]+/g, '-');
 
 interface ParkCardProps {
   index: number;
   park: Park;
+  wishlisted?: boolean;
+  onToggleWishlist?: () => void;
+  isToggling?: boolean;
 }
 
-function ParkCard({ index, park }: ParkCardProps) {
-  const {
-    park_id: parkId,
-    name,
-    location,
-    description,
-    established_date: establsihedDate,
-    size,
-    visitor_count: visitorCount,
-    website,
-    entrance_info: entranceInfo,
-  } = park;
-  const [isBookmarked, setIsBookmarked] = useState(false);
+function ParkCard({
+  index,
+  park,
+  wishlisted = false,
+  onToggleWishlist,
+  isToggling = false,
+}: ParkCardProps) {
+  const { name, location } = park;
+
   const [haveBeen, setHaveBeen] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -58,9 +53,8 @@ function ParkCard({ index, park }: ParkCardProps) {
     img.onerror = () => setImageLoaded(true);
   }, [isVisible, name]);
 
-  // TODO: bookmark and have been only shows up for logged in users
+  // TODO: replace with actual auth state
   const isLoggedIn = true;
-  const isWishlist = true;
 
   const backgroundImage = `url('/park-cover-photos/${kebabCase(name)}.jpg')`;
 
@@ -69,86 +63,58 @@ function ParkCard({ index, park }: ParkCardProps) {
       {!imageLoaded ? (
         <ParkCardSkeleton />
       ) : (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Card
-          className={clsx(
-            'w-80 h-72 relative bg-cover cursor-pointer transition-opacity duration-500 opacity-100',
-            {
-              'grayscale-[75%] hover:grayscale-0': isWishlist && !haveBeen,
-            }
-          )}
-          style={{ backgroundImage }}
-        >
-          <CardHeader className='flex flex-row justify-between w-full p-0'>
-            <span className='text-white font-bold mx-2 border-b-2'>
-              {index}
-            </span>
-            {isLoggedIn && (
-              <Bookmark
-                fill={isBookmarked ? 'white' : 'none'}
-                className='h-4 w-4 cursor-pointer text-white hover:fill-white m-3'
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsBookmarked(!isBookmarked);
-                }}
-              />
-            )}
-          </CardHeader>
-          <CardContent className='flex flex-col justify-center items-center h-5/6 text-center w-full'>
-            <CardTitle className='text-3xl text-white font-bold'>
-              {name}
-            </CardTitle>
-            <CardDescription className='text-white text-lg font-semibold'>
-              {location}
-            </CardDescription>
-          </CardContent>
-          <CardFooter className='flex justify-end w-full p-0 absolute bottom-0'>
-            {isLoggedIn && (
-              <CircleCheckBig
-                fill={haveBeen ? 'green' : 'none'}
-                className={clsx(
-                  'h-4 w-4 cursor-pointer hover:fill-primary m-3 hover:text-[green-400]',
-                  haveBeen ? 'text-green-400' : 'text-white'
+        <Dialog>
+          <DialogTrigger asChild>
+            <Card
+              className={clsx(
+                'w-80 h-72 relative bg-cover cursor-pointer transition-opacity duration-500 opacity-100',
+                { 'grayscale-[75%] hover:grayscale-0': !haveBeen }
+              )}
+              style={{ backgroundImage }}
+            >
+              <CardHeader className='flex flex-row justify-between w-full p-0'>
+                <span className='text-white font-bold mx-2 border-b-2'>{index}</span>
+                {isLoggedIn && onToggleWishlist && (
+                  <Bookmark
+                    fill={wishlisted ? 'white' : 'none'}
+                    className={clsx(
+                      'h-4 w-4 cursor-pointer text-white hover:fill-white m-3 transition-all',
+                      isToggling && 'opacity-50 pointer-events-none'
+                    )}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleWishlist();
+                    }}
+                  />
                 )}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setHaveBeen(!haveBeen);
-                }}
-              />
-            )}
-          </CardFooter>
-        </Card>
-      </DialogTrigger>
-      <DialogContent className='max-w-[640px]'>
-        <ParkDetails park={park} />
-      </DialogContent>
-      {/* <DialogContent className='max-w-[640px]'>
-        <DialogHeader>
-          <DialogTitle>
-            <a className='hover:text-primary' href={`/parks/${parkId}`}>
-              {name}
-            </a>
-          </DialogTitle>
-          <DialogDescription>{location}</DialogDescription>
-        </DialogHeader>
-        <div>{description}</div>
-        <div>Est. {establsihedDate}</div>
-        <div>Size: {size}</div>
-        <div>Visitor Counter: {visitorCount}</div>
-        <div>Entrance Info: {entranceInfo}</div>
-        <div className='flex items-center gap-x-1'>
-          <span>Learn more at</span>
-          <a
-            href={website}
-            className='group underline hover:text-accent inline-flex'
-          >
-            <span>{website}</span>
-            <ArrowUpRight className='h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 translate-y-1 ml-0.5' />
-          </a>
-        </div>
-      </DialogContent> */}
-    </Dialog>
+              </CardHeader>
+              <CardContent className='flex flex-col justify-center items-center h-5/6 text-center w-full'>
+                <CardTitle className='text-3xl text-white font-bold'>{name}</CardTitle>
+                <CardDescription className='text-white text-lg font-semibold'>
+                  {location}
+                </CardDescription>
+              </CardContent>
+              <CardFooter className='flex justify-end w-full p-0 absolute bottom-0'>
+                {isLoggedIn && (
+                  <CircleCheckBig
+                    fill={haveBeen ? 'green' : 'none'}
+                    className={clsx(
+                      'h-4 w-4 cursor-pointer hover:fill-primary m-3',
+                      haveBeen ? 'text-green-400' : 'text-white'
+                    )}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setHaveBeen(!haveBeen);
+                    }}
+                  />
+                )}
+              </CardFooter>
+            </Card>
+          </DialogTrigger>
+          <DialogContent className='max-w-[640px]'>
+            <ParkDetails park={park} />
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );
