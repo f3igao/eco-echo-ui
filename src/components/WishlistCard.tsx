@@ -8,7 +8,15 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 // TODO: replace with actual user from auth context
 const MOCK_USER_ID = 1;
 
-function WishlistCard({ wishlist, park }: { wishlist: Wishlist; park: Park | undefined }) {
+function WishlistCard({
+  wishlist,
+  park,
+  onRemove,
+}: {
+  wishlist: Wishlist;
+  park: Park | undefined;
+  onRemove: (parkId: number, parkName: string) => void;
+}) {
   const { toggleWishlist, isToggling } = useWishlists(MOCK_USER_ID);
 
   if (!park) {
@@ -23,7 +31,7 @@ function WishlistCard({ wishlist, park }: { wishlist: Wishlist; park: Park | und
     <Dialog>
       <div className='flex items-center gap-4 rounded-lg border bg-card p-4 hover:shadow-sm transition-shadow'>
         <div className='flex-1 min-w-0'>
-            <DialogTrigger asChild>
+          <DialogTrigger asChild>
             <button type='button' className='text-left w-full'>
               <p className='font-semibold text-text hover:text-primary transition-colors truncate'>
                 {park.name}
@@ -37,7 +45,9 @@ function WishlistCard({ wishlist, park }: { wishlist: Wishlist; park: Park | und
         </div>
         <button
           type='button'
-          onClick={() => toggleWishlist(wishlist.park_id)}
+          onClick={() =>
+            onRemove(wishlist.park_id, park.name)
+          }
           disabled={isToggling}
           className='shrink-0 text-muted-foreground hover:text-destructive transition-colors disabled:opacity-50'
           title='Remove from wishlist'

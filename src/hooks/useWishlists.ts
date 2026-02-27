@@ -40,6 +40,10 @@ export function useWishlists(userId: number) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey }),
   });
 
+  function removeWishlist(parkId: number) {
+    removeMutation.mutate(parkId);
+  }
+
   function toggleWishlist(parkId: number) {
     if (isWishlisted(parkId)) {
       removeMutation.mutate(parkId);
@@ -54,6 +58,7 @@ export function useWishlists(userId: number) {
     isWishlisted,
     getWishlistEntry,
     toggleWishlist,
+    removeWishlist,
     isToggling: addMutation.isPending || removeMutation.isPending,
   };
 }

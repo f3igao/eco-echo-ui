@@ -22,7 +22,7 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path='account' element={<Account />} />
         <Route path='/parks' element={<Parks />} />
-        <Route path='/parks/:park_id' element={<ParkDetails />} />
+        {/* <Route path='/parks/:park_id' element={<ParkDetails />} /> */}
         <Route path='/wishlists' element={<Wishlists />} />
         <Route path='/activities' element={<Activities />} />
         <Route path='/activities/:activity_id' element={<ActivityDetails />} />
