@@ -8,12 +8,13 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/context/AuthContext';
 import { validateEmail, validateMinLength } from '@/lib/form-validations';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
 const formSchema = z.object({
@@ -23,6 +24,8 @@ const formSchema = z.object({
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { setUser } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -34,8 +37,9 @@ function Login() {
 
   const mutation = useMutation({
     mutationFn: login,
-    onSuccess: () => {
-      navigate('/');
+    onSuccess: (user) => {
+      setUser(user);
+      navigate(location.state?.from ?? '/', { replace: true });
     },
     onError: (error: unknown) => {
       const message =

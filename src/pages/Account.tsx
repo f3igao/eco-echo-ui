@@ -1,4 +1,4 @@
-import { updateUser } from '@/api/users';
+import { deleteUser, updateUser } from '@/api/users';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { useAuth } from '@/context/AuthContext';
 import { validateEmail, validateMinLength } from '@/lib/form-validations';
 import type { User } from '@/types/user';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -48,15 +49,6 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
-// TODO: replace with actual user from auth context
-const MOCK_USER: User = {
-  user_id: 1,
-  name: 'Alex Rivera',
-  email: 'alex.rivera@example.com',
-  password: '',
-  created_at: new Date('2024-03-15'),
-  updated_at: new Date(),
-};
 
 const profileSchema = z.object({
   name: validateMinLength(2, 'Name must be at least 2 characters.'),
@@ -101,7 +93,7 @@ function ProfileCard({ user, onEdit }: { user: User; onEdit: () => void }) {
           <Badge className='gap-1.5 text-xs'>
             <CalendarDays className='w-3 h-3' />
             Member since{' '}
-            {user.created_at.toLocaleDateString('en-US', {
+            {new Date(user.created_at).toLocaleDateString('en-US', {
               month: 'long',
               year: 'numeric',
             })}
@@ -159,6 +151,8 @@ function SettingsTile({ icon, title, description, onClick, active }: SettingsTil
 }
 
 function PersonalInfoForm({ user, onClose }: { user: User; onClose: () => void }) {
+  const { setUser } = useAuth();
+
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     defaultValues: { name: user.name, email: user.email },
@@ -169,7 +163,8 @@ function PersonalInfoForm({ user, onClose }: { user: User; onClose: () => void }
   const mutation = useMutation({
     mutationFn: (data: z.infer<typeof profileSchema>) =>
       updateUser(user.user_id, { ...user, ...data }),
-    onSuccess: () => {
+    onSuccess: (updatedUser) => {
+      setUser(updatedUser);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     },
@@ -357,21 +352,20 @@ function PasswordForm({ onClose }: { onClose: () => void }) {
 
 function DangerPanel({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
 
   const deleteMutation = useMutation({
-    mutationFn: async () => {
-      // TODO: call deleteUser(user_id) and clear auth state
-      await new Promise((res) => setTimeout(res, 600));
-    },
+    mutationFn: () => deleteUser(user?.user_id ?? 0),
     onSuccess: () => {
+      logout();
       setOpen(false);
       navigate('/');
     },
   });
 
   const logOut = () => {
-    // TODO: clear auth tokens / session
+    logout();
     navigate('/login');
   };
 
@@ -443,11 +437,14 @@ function DangerPanel({ onClose }: { onClose: () => void }) {
 }
 
 function Account() {
+  const { user } = useAuth();
   const [activeSection, setActiveSection] = useState<Section>(null);
 
   const toggleSection = (section: Section) => {
     setActiveSection((prev) => (prev === section ? null : section));
   };
+
+  if (!user) return null;
 
   return (
     <div className='max-w-4xl mx-auto py-10 px-4 sm:px-6'>
@@ -460,7 +457,7 @@ function Account() {
         {/* Left — profile summary */}
         <div className='space-y-4'>
           <ProfileCard
-            user={MOCK_USER}
+            user={user}
             onEdit={() => toggleSection('profile')}
           />
 
@@ -511,7 +508,7 @@ function Account() {
           </div>
 
           {activeSection === 'profile' && (
-            <PersonalInfoForm user={MOCK_USER} onClose={() => setActiveSection(null)} />
+            <PersonalInfoForm user={user} onClose={() => setActiveSection(null)} />
           )}
           {activeSection === 'password' && (
             <PasswordForm onClose={() => setActiveSection(null)} />

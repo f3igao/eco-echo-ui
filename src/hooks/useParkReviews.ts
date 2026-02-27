@@ -14,6 +14,7 @@ export function useParkReviews(userId: number) {
         if (err?.response?.status === 404) return { park_reviews: [] };
         throw err;
       }),
+    enabled: !!userId,
     staleTime: 5 * 60 * 1000,
   });
 

@@ -1,6 +1,7 @@
 import { getParks } from '@/api/parks';
 import ParkCard from '@/components/ParkCard';
 import ParkCardSkeleton from '@/components/ParkCardSkeleton';
+import { useAuth } from '@/context/AuthContext';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import { useParkReviews } from '@/hooks/useParkReviews';
 import { useWishlist } from '@/hooks/useWishlist';
@@ -8,13 +9,13 @@ import type { Park } from '@/types/park';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
-// TODO: replace with actual user from auth context
-const MOCK_USER_ID = 1;
-
 const PAGE_SIZE = 12;
 const SKELETON_KEYS = Array.from({ length: PAGE_SIZE }, (_, i) => `sk-${i}`);
 
 function Parks() {
+  const { user } = useAuth();
+  const userId = user?.user_id ?? 0;
+
   const { ref: sentinelRef, isVisible } = useIntersectionObserver<HTMLDivElement>({
     rootMargin: '300px',
   });
@@ -31,8 +32,8 @@ function Parks() {
       staleTime: 5 * 60 * 1000,
     });
 
-  const { isWishlisted, toggleWishlist, isToggling } = useWishlist(MOCK_USER_ID);
-  const { hasVisited } = useParkReviews(MOCK_USER_ID);
+  const { isWishlisted, toggleWishlist, isToggling } = useWishlist(userId);
+  const { hasVisited } = useParkReviews(userId);
 
   useEffect(() => {
     if (isVisible && hasNextPage && !isFetchingNextPage) {

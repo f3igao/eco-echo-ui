@@ -1,15 +1,15 @@
 import { getParkReviewsByPark } from '@/api/park-reviews';
+import { AuthPromptDialog } from '@/components/AuthPromptDialog';
 import LogVisitForm from '@/components/LogVisitForm';
 import { StarRating } from '@/components/StarRating';
 import { Button } from '@/components/ui/button';
 import { DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { useAuth } from '@/context/AuthContext';
 import type { Park } from '@/types/park';
 import type { ParkReview } from '@/types/parkReview';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowUpRight, CalendarDays, MapPin, Trees } from 'lucide-react';
 import { useState } from 'react';
-
-const MOCK_USER_ID = 1;
 
 interface ParkDetailsProps {
   park: Park;
@@ -39,6 +39,8 @@ function ReviewCard({ review }: { review: ParkReview }) {
 
 function ParkDetails({ park }: ParkDetailsProps) {
   const [showForm, setShowForm] = useState(false);
+  const [authPromptOpen, setAuthPromptOpen] = useState(false);
+  const { user } = useAuth();
 
   const { data, isLoading } = useQuery({
     queryKey: ['park-reviews', park.park_id],
@@ -51,8 +53,8 @@ function ParkDetails({ park }: ParkDetailsProps) {
   });
 
   const reviews: ParkReview[] = data?.park_reviews ?? [];
-  const myVisits = reviews.filter((r) => r.user_id === MOCK_USER_ID);
-  const otherReviews = reviews.filter((r) => r.user_id !== MOCK_USER_ID);
+  const myVisits = reviews.filter((r) => r.user_id === user?.user_id);
+  const otherReviews = reviews.filter((r) => r.user_id !== user?.user_id);
   const avgRating =
     reviews.length > 0
       ? reviews.reduce((sum, r) => sum + Number(r.rating), 0) / reviews.length
@@ -118,15 +120,30 @@ function ParkDetails({ park }: ParkDetailsProps) {
             />
           </div>
         ) : (
-          <Button onClick={() => setShowForm(true)} className='w-full'>
+          <Button
+            onClick={() => {
+              if (!user) {
+                setAuthPromptOpen(true);
+              } else {
+                setShowForm(true);
+              }
+            }}
+            className='w-full'
+          >
             Log a visit
           </Button>
         )}
       </div>
 
+      <AuthPromptDialog
+        open={authPromptOpen}
+        onOpenChange={setAuthPromptOpen}
+        message='Sign in to log visits and track your park adventures.'
+      />
+
       {!showForm && (
         <>
-          {(isLoading || myVisits.length > 0) && (
+          {user && (isLoading || myVisits.length > 0) && (
             <div className='space-y-3'>
               <h3 className='font-semibold'>
                 Past Visits{' '}

@@ -8,8 +8,9 @@ import {
 } from '@/components/ui/navigation-menu';
 import { Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 
-const navLinks = [
+const authedNavLinks = [
   { to: '/parks', label: 'Parks' },
   { to: '/users', label: 'Users' },
   { to: '/wishlist', label: 'Wishlist' },
@@ -17,9 +18,16 @@ const navLinks = [
   { to: '/account', label: 'Account' },
 ];
 
+const guestNavLinks = [
+  { to: '/parks', label: 'Parks' },
+  { to: '/login', label: 'Log In' },
+];
+
 export function MainNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { pathname } = useLocation();
+  const { user } = useAuth();
+  const navLinks = user ? authedNavLinks : guestNavLinks;
 
   return (
     <div className='relative'>

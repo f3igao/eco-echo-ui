@@ -1,3 +1,4 @@
+import { useAuth } from '@/context/AuthContext';
 import { useWishlist } from '@/hooks/useWishlist';
 import type { Park } from '@/types/park';
 import type { Wishlist } from '@/types/wishlist';
@@ -13,9 +14,6 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useEffect, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
-
-// TODO: replace with actual user from auth context
-const MOCK_USER_ID = 1;
 
 function parseDateStr(dateStr: string | null | undefined): Date | undefined {
   if (!dateStr) return undefined;
@@ -43,7 +41,8 @@ function WishlistCard({
   park: Park | undefined;
   onRemove: (parkId: number, parkName: string) => void;
 }) {
-  const { isToggling, updateWishlist, isUpdating } = useWishlist(MOCK_USER_ID);
+  const { user } = useAuth();
+  const { isToggling, updateWishlist, isUpdating } = useWishlist(user?.user_id ?? 0);
   const [isExpanded, setIsExpanded] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: parseDateStr(wishlist.planned_date_start),

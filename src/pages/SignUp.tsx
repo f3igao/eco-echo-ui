@@ -8,6 +8,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/context/AuthContext';
 import { validateEmail, validateMinLength } from '@/lib/form-validations';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
@@ -24,6 +25,7 @@ const formSchema = z.object({
 
 function SignUp() {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -36,7 +38,8 @@ function SignUp() {
 
   const mutation = useMutation({
     mutationFn: signUp,
-    onSuccess: () => {
+    onSuccess: (user) => {
+      setUser(user);
       navigate('/');
     },
     onError: (error: unknown) => {

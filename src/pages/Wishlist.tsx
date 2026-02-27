@@ -1,6 +1,7 @@
 import { getPark } from '@/api/parks';
 import Loading from '@/components/Loading';
 import WishlistCard from '@/components/WishlistCard';
+import { useAuth } from '@/context/AuthContext';
 import { useWishlist } from '@/hooks/useWishlist';
 import type { Park } from '@/types/park';
 import { useQueries } from '@tanstack/react-query';
@@ -8,13 +9,11 @@ import { Bookmark, Trees } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-// TODO: replace with actual user from auth context
-const MOCK_USER_ID = 1;
-
 type PendingRemoval = { parkId: number; parkName: string };
 
 function Wishlist() {
-  const { wishlists, isLoading, removeWishlist } = useWishlist(MOCK_USER_ID);
+  const { user } = useAuth();
+  const { wishlists, isLoading, removeWishlist } = useWishlist(user?.user_id ?? 0);
   const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingRef = useRef<PendingRemoval | null>(null);

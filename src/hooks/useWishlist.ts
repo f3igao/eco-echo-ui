@@ -18,6 +18,7 @@ export function useWishlist(userId: number) {
         if (err?.response?.status === 404) return { wishlists: [] };
         throw err;
       }),
+    enabled: !!userId,
     staleTime: 5 * 60 * 1000,
   });
 
@@ -42,10 +43,12 @@ export function useWishlist(userId: number) {
   });
 
   function removeWishlist(parkId: number) {
+    if (!userId) return;
     removeMutation.mutate(parkId);
   }
 
   function toggleWishlist(parkId: number) {
+    if (!userId) return;
     if (isWishlisted(parkId)) {
       removeMutation.mutate(parkId);
     } else {
