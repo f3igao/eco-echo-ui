@@ -1,6 +1,6 @@
 import { getActivities } from '@/api/activities';
 import Loading from '@/components/Loading';
-import { Activity } from '@/types/activity';
+import type { Activity } from '@/types/activity';
 import { useQuery } from '@tanstack/react-query';
 import { Pencil } from 'lucide-react';
 

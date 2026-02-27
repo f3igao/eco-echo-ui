@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Checkbox } from '@radix-ui/react-checkbox';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { Form } from 'react-router-dom';
+import { Form } from '@/components/ui/form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
@@ -46,12 +46,12 @@ function NewActivityForm() {
     },
   });
 
-  const { setQueryData, invalidateQueries } = useQueryClient();
+  const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: createActivity,
     onSuccess: (data) => {
-      setQueryData(['activities', data.id], data);
-      invalidateQueries({ queryKey: ['activities'], exact: true });
+      queryClient.setQueryData(['activities', data.activity_id], data);
+      queryClient.invalidateQueries({ queryKey: ['activities'], exact: true });
     },
   });
 
