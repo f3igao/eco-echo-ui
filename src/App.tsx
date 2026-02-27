@@ -5,8 +5,6 @@ import Loading from './components/Loading';
 import { Toaster } from './components/ui/sonner';
 
 const Account = lazy(() => import('./pages/Account'));
-const Activities = lazy(() => import('./pages/Activities'));
-const ActivityDetails = lazy(() => import('./pages/ActivityDetails'));
 const Home = lazy(() => import('./pages/Home'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const ParkDetails = lazy(() => import('./pages/ParkDetails'));
@@ -25,8 +23,6 @@ export default function App() {
         <Route path='/parks' element={<Parks />} />
         {/* <Route path='/parks/:park_id' element={<ParkDetails />} /> */}
         <Route path='/wishlists' element={<Wishlists />} />
-        <Route path='/activities' element={<Activities />} />
-        <Route path='/activities/:activity_id' element={<ActivityDetails />} />
         <Route path='/users' element={<Users />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/login' element={<Login />} />

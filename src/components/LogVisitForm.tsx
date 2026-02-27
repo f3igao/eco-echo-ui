@@ -1,5 +1,3 @@
-import { createActivityReview } from '@/api/activity-reviews';
-import { getActivitiesByPark } from '@/api/activities';
 import { createParkReview } from '@/api/park-reviews';
 import { PARK_REVIEWS_USER_QUERY_KEY } from '@/hooks/useParkReviews';
 import { StarRating } from '@/components/StarRating';
@@ -14,11 +12,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import type { Activity } from '@/types/activity';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -30,16 +26,12 @@ const formSchema = z.object({
   visit_date: z.string().min(1, 'Visit date is required.'),
   rating: z.number().min(1, 'Please select a rating.').max(5),
   comment: z.string().optional(),
+  activities: z.string().optional(),
   media_url: z.string().url('Must be a valid URL.').optional().or(z.literal('')),
   is_private: z.boolean(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
-
-interface ActivityEntry {
-  checked: boolean;
-  rating: number;
-}
 
 interface LogVisitFormProps {
   parkId: number;
@@ -48,16 +40,7 @@ interface LogVisitFormProps {
 
 function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
   const queryClient = useQueryClient();
-  const [activityEntries, setActivityEntries] = useState<Record<number, ActivityEntry>>({});
   const [succeeded, setSucceeded] = useState(false);
-
-  const { data: activitiesData } = useQuery({
-    queryKey: ['activities', 'park', parkId],
-    queryFn: () => getActivitiesByPark(parkId),
-    staleTime: 5 * 60 * 1000,
-  });
-
-  const activities: Activity[] = activitiesData?.activities ?? [];
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -67,6 +50,7 @@ function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
       visit_date: today,
       rating: 0,
       comment: '',
+      activities: '',
       media_url: '',
       is_private: false,
     },
@@ -76,34 +60,16 @@ function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
     mutationFn: async (values: FormValues) => {
       const mediaUrl = values.media_url || undefined;
 
-      const parkReview = await createParkReview({
+      return createParkReview({
         park_id: parkId,
         user_id: MOCK_USER_ID,
         rating: values.rating,
         visit_date: values.visit_date,
         comment: values.comment ?? '',
+        activities: values.activities || null,
         ...(mediaUrl ? { media_url: mediaUrl } : {}),
         is_private: values.is_private,
       });
-
-      const checkedActivities = Object.entries(activityEntries).filter(
-        ([, entry]) => entry.checked
-      );
-
-      await Promise.all(
-        checkedActivities.map(([activityId, entry]) =>
-          createActivityReview({
-            activity_id: Number(activityId),
-            user_id: MOCK_USER_ID,
-            rating: entry.rating || values.rating,
-            comment: values.comment ?? '',
-            ...(mediaUrl ? { media_url: mediaUrl } : {}),
-            is_private: values.is_private,
-          })
-        )
-      );
-
-      return parkReview;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['park-reviews', parkId] });
@@ -115,22 +81,6 @@ function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
       }, 1500);
     },
   });
-
-  const toggleActivity = (activityId: number, checked: boolean) => {
-    setActivityEntries((prev) => ({
-      ...prev,
-      [activityId]: { checked, rating: prev[activityId]?.rating ?? 0 },
-    }));
-  };
-
-  const setActivityRating = (activityId: number, rating: number) => {
-    setActivityEntries((prev) => ({
-      ...prev,
-      [activityId]: { checked: prev[activityId]?.checked ?? true, rating },
-    }));
-  };
-
-  const watchedRating = form.watch('rating');
 
   if (succeeded) {
     return (
@@ -202,46 +152,27 @@ function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
           )}
         />
 
-        {activities.length > 0 && (
-          <div className='space-y-2'>
-            <Label>Activities done</Label>
-            <div className='space-y-2 rounded-md border p-3'>
-              {activities.map((activity) => {
-                const id = activity.activity_id ?? 0;
-                const entry = activityEntries[id];
-                return (
-                  <div key={id} className='space-y-1'>
-                    <div className='flex items-center gap-2'>
-                      <Checkbox
-                        id={`activity-${id}`}
-                        checked={entry?.checked ?? false}
-                        onCheckedChange={(checked) =>
-                          toggleActivity(id, checked === true)
-                        }
-                      />
-                      <label
-                        htmlFor={`activity-${id}`}
-                        className='text-sm font-medium leading-none cursor-pointer'
-                      >
-                        {activity.name}
-                      </label>
-                    </div>
-                    {entry?.checked && (
-                      <div className='ml-6 flex items-center gap-2'>
-                        <span className='text-xs text-muted-foreground'>Rating:</span>
-                        <StarRating
-                          size='sm'
-                          value={entry.rating || watchedRating}
-                          onChange={(v) => setActivityRating(id, v)}
-                        />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
+        <FormField
+          control={form.control}
+          name='activities'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                Activities{' '}
+                <span className='text-muted-foreground font-normal'>(optional)</span>
+              </FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder='What did you do? e.g. hiking, bird watching, kayaking...'
+                  className='resize-none'
+                  rows={2}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}

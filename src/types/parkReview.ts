@@ -1,6 +1,7 @@
 export type ParkReview = {
   park_review_id: number;
   comment: string;
+  activities?: string | null;
   is_private: boolean;
   media_url: string | null;
   rating: string;
@@ -17,6 +18,7 @@ export type CreateParkReview = {
   rating: number;
   visit_date: string;
   comment: string;
+  activities?: string | null;
   media_url?: string | null;
   is_private: boolean;
 };
