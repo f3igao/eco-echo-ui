@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Pencil } from 'lucide-react';
 
 function Activities() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['activities'],
     queryFn: getActivities,
     staleTime: 5 * 60 * 1000,
@@ -13,11 +13,22 @@ function Activities() {
 
   const onEdit = (_id: number) => {};
 
-  return isLoading ? (
-    <Loading />
-  ) : (
+  if (isLoading) return <Loading />;
+
+  if (isError)
+    return (
+      <p className='text-destructive text-sm'>
+        Failed to load activities. Please try again later.
+      </p>
+    );
+
+  const activities: Activity[] = Array.isArray(data)
+    ? data
+    : (data?.activities ?? []);
+
+  return (
     <ul className='list-disc'>
-      {data.activities.map(
+      {activities.map(
         ({
           activity_id,
           name,
@@ -25,7 +36,7 @@ function Activities() {
           duration,
           difficulty,
           require_special_equipment,
-        }: Activity) => (
+        }) => (
           <li className='flex gap-x-2 items-center' key={activity_id}>
             <span>{name} |</span>
             <span>{description} |</span>
