@@ -1,4 +1,5 @@
 import { updateUser } from '@/api/users';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -25,12 +26,23 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 import { validateEmail, validateMinLength } from '@/lib/form-validations';
 import type { User } from '@/types/user';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import { CalendarDays, KeyRound, LogOut, Mail, Trash2, UserRound } from 'lucide-react';
+import {
+  CalendarDays,
+  ChevronRight,
+  KeyRound,
+  LogOut,
+  Mail,
+  Shield,
+  Trash2,
+  TreePine,
+  UserRound,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -71,14 +83,85 @@ function getInitials(name: string) {
     .slice(0, 2);
 }
 
+type Section = 'profile' | 'password' | 'danger' | null;
 
-function ProfileSection({ user }: { user: User }) {
+function ProfileCard({ user, onEdit }: { user: User; onEdit: () => void }) {
+  return (
+    <Card className='overflow-hidden'>
+      <div className='h-20 bg-gradient-to-br from-primary/80 to-primary' />
+      <CardContent className='pt-0 pb-6'>
+        <div className='-mt-10 flex flex-col items-center text-center gap-3'>
+          <div className='w-20 h-20 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold border-4 border-card shadow-md'>
+            {getInitials(user.name)}
+          </div>
+          <div>
+            <h3 className='text-xl font-bold text-foreground'>{user.name}</h3>
+            <p className='text-sm text-muted-foreground mt-0.5'>{user.email}</p>
+          </div>
+          <Badge className='gap-1.5 text-xs'>
+            <CalendarDays className='w-3 h-3' />
+            Member since{' '}
+            {user.created_at.toLocaleDateString('en-US', {
+              month: 'long',
+              year: 'numeric',
+            })}
+          </Badge>
+          <Button size='sm' variant='outline' className='mt-1 w-full' onClick={onEdit}>
+            Edit profile
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+interface SettingsTileProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  onClick: () => void;
+  active?: boolean;
+}
+
+function SettingsTile({ icon, title, description, onClick, active }: SettingsTileProps) {
+  return (
+    <button
+      type='button'
+      onClick={onClick}
+      className={`group w-full text-left p-5 rounded-xl border transition-all duration-150 hover:shadow-md hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+        active
+          ? 'border-primary/60 bg-primary/5 shadow-sm'
+          : 'border-border bg-card hover:bg-accent/30'
+      }`}
+    >
+      <div className='flex items-start justify-between gap-3'>
+        <div className='flex items-start gap-3.5'>
+          <div
+            className={`mt-0.5 p-2 rounded-lg transition-colors ${
+              active ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
+            }`}
+          >
+            {icon}
+          </div>
+          <div>
+            <p className='font-semibold text-foreground text-sm'>{title}</p>
+            <p className='text-xs text-muted-foreground mt-0.5 leading-relaxed'>{description}</p>
+          </div>
+        </div>
+        <ChevronRight
+          className={`w-4 h-4 mt-1 shrink-0 transition-transform ${
+            active ? 'text-primary rotate-90' : 'text-muted-foreground group-hover:translate-x-0.5'
+          }`}
+        />
+      </div>
+    </button>
+  );
+}
+
+function PersonalInfoForm({ user, onClose }: { user: User; onClose: () => void }) {
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
-    defaultValues: {
-      name: user.name,
-      email: user.email,
-    },
+    defaultValues: { name: user.name, email: user.email },
   });
 
   const [saved, setSaved] = useState(false);
@@ -101,23 +184,12 @@ function ProfileSection({ user }: { user: User }) {
 
   return (
     <Card>
-      <CardHeader>
-        <div className='flex items-center gap-4'>
-          <div className='flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground text-xl font-semibold shrink-0'>
-            {getInitials(user.name)}
-          </div>
-          <div>
-            <CardTitle className='text-text'>{user.name}</CardTitle>
-            <CardDescription className='flex items-center gap-1.5 mt-1'>
-              <CalendarDays className='w-3.5 h-3.5' />
-              Member since{' '}
-              {user.created_at.toLocaleDateString('en-US', {
-                month: 'long',
-                year: 'numeric',
-              })}
-            </CardDescription>
-          </div>
+      <CardHeader className='pb-4'>
+        <div className='flex items-center gap-2'>
+          <UserRound className='w-5 h-5 text-primary' />
+          <CardTitle className='text-base'>Personal information</CardTitle>
         </div>
+        <CardDescription>Update your display name and email address.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -130,11 +202,9 @@ function ProfileSection({ user }: { user: User }) {
               name='name'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='flex items-center gap-1.5'>
-                    <UserRound className='w-3.5 h-3.5' /> Name
-                  </FormLabel>
+                  <FormLabel>Full name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input placeholder='Your name' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -145,11 +215,9 @@ function ProfileSection({ user }: { user: User }) {
               name='email'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='flex items-center gap-1.5'>
-                    <Mail className='w-3.5 h-3.5' /> Email
-                  </FormLabel>
+                  <FormLabel>Email address</FormLabel>
                   <FormControl>
-                    <Input type='email' {...field} />
+                    <Input type='email' placeholder='your@email.com' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -160,13 +228,18 @@ function ProfileSection({ user }: { user: User }) {
                 {form.formState.errors.root.message}
               </p>
             )}
-            <div className='flex items-center gap-3 pt-1'>
-              <Button type='submit' disabled={mutation.isPending}>
-                {mutation.isPending ? 'Saving...' : 'Save changes'}
-              </Button>
+            <div className='flex items-center justify-between pt-1'>
+              <div className='flex items-center gap-3'>
+                <Button type='submit' disabled={mutation.isPending}>
+                  {mutation.isPending ? 'Saving…' : 'Save changes'}
+                </Button>
+                <Button type='button' variant='ghost' onClick={onClose}>
+                  Cancel
+                </Button>
+              </div>
               {saved && (
-                <span className='text-sm text-primary font-medium'>
-                  Changes saved!
+                <span className='text-sm text-primary font-medium animate-in fade-in'>
+                  Saved!
                 </span>
               )}
             </div>
@@ -177,14 +250,10 @@ function ProfileSection({ user }: { user: User }) {
   );
 }
 
-function PasswordSection() {
+function PasswordForm({ onClose }: { onClose: () => void }) {
   const form = useForm<z.infer<typeof passwordSchema>>({
     resolver: zodResolver(passwordSchema),
-    defaultValues: {
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-    },
+    defaultValues: { currentPassword: '', newPassword: '', confirmPassword: '' },
   });
 
   const [saved, setSaved] = useState(false);
@@ -200,21 +269,18 @@ function PasswordSection() {
       setTimeout(() => setSaved(false), 2500);
     },
     onError: () => {
-      form.setError('root', {
-        message: 'Failed to change password. Please try again.',
-      });
+      form.setError('root', { message: 'Failed to change password. Please try again.' });
     },
   });
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className='flex items-center gap-2 text-text'>
-          <KeyRound className='w-5 h-5' /> Change Password
-        </CardTitle>
-        <CardDescription>
-          Choose a strong password of at least 6 characters.
-        </CardDescription>
+      <CardHeader className='pb-4'>
+        <div className='flex items-center gap-2'>
+          <Shield className='w-5 h-5 text-primary' />
+          <CardTitle className='text-base'>Password &amp; security</CardTitle>
+        </div>
+        <CardDescription>Choose a strong password of at least 6 characters.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -235,6 +301,7 @@ function PasswordSection() {
                 </FormItem>
               )}
             />
+            <Separator />
             <FormField
               control={form.control}
               name='newPassword'
@@ -266,12 +333,17 @@ function PasswordSection() {
                 {form.formState.errors.root.message}
               </p>
             )}
-            <div className='flex items-center gap-3 pt-1'>
-              <Button type='submit' disabled={mutation.isPending}>
-                {mutation.isPending ? 'Updating...' : 'Update password'}
-              </Button>
+            <div className='flex items-center justify-between pt-1'>
+              <div className='flex items-center gap-3'>
+                <Button type='submit' disabled={mutation.isPending}>
+                  {mutation.isPending ? 'Updating…' : 'Update password'}
+                </Button>
+                <Button type='button' variant='ghost' onClick={onClose}>
+                  Cancel
+                </Button>
+              </div>
               {saved && (
-                <span className='text-sm text-primary font-medium'>
+                <span className='text-sm text-primary font-medium animate-in fade-in'>
                   Password updated!
                 </span>
               )}
@@ -283,7 +355,7 @@ function PasswordSection() {
   );
 }
 
-function DangerZone() {
+function DangerPanel({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
@@ -304,57 +376,151 @@ function DangerZone() {
   };
 
   return (
-    <Card className='border-destructive/40'>
-      <CardHeader>
-        <CardTitle className='text-destructive'>Danger zone</CardTitle>
+    <Card className='border-destructive/30'>
+      <CardHeader className='pb-4'>
+        <div className='flex items-center gap-2'>
+          <LogOut className='w-5 h-5 text-destructive' />
+          <CardTitle className='text-base text-destructive'>Account actions</CardTitle>
+        </div>
         <CardDescription>
-          These actions are permanent and cannot be undone.
+          Log out of your session or permanently remove your account.
         </CardDescription>
       </CardHeader>
-      <CardContent className='flex flex-col sm:flex-row gap-3'>
-        <Button variant='outline' className='gap-2' onClick={logOut}>
-          <LogOut className='w-4 h-4' /> Log out
+      <CardContent className='space-y-3'>
+        <div className='flex items-center justify-between rounded-lg border p-4'>
+          <div>
+            <p className='text-sm font-medium'>Log out</p>
+            <p className='text-xs text-muted-foreground mt-0.5'>Sign out of this device</p>
+          </div>
+          <Button variant='outline' size='sm' className='gap-1.5' onClick={logOut}>
+            <LogOut className='w-3.5 h-3.5' /> Log out
+          </Button>
+        </div>
+
+        <div className='flex items-center justify-between rounded-lg border border-destructive/30 bg-destructive/5 p-4'>
+          <div>
+            <p className='text-sm font-medium text-destructive'>Delete account</p>
+            <p className='text-xs text-muted-foreground mt-0.5'>
+              Permanently remove all your data
+            </p>
+          </div>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button variant='destructive' size='sm' className='gap-1.5'>
+                <Trash2 className='w-3.5 h-3.5' /> Delete
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Delete your account?</DialogTitle>
+                <DialogDescription>
+                  This will permanently delete your account and all associated data. This action
+                  cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant='outline' onClick={() => setOpen(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant='destructive'
+                  disabled={deleteMutation.isPending}
+                  onClick={() => deleteMutation.mutate()}
+                >
+                  {deleteMutation.isPending ? 'Deleting…' : 'Yes, delete'}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        <Button type='button' variant='ghost' size='sm' onClick={onClose} className='mt-1'>
+          Close
         </Button>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button variant='destructive' className='gap-2'>
-              <Trash2 className='w-4 h-4' /> Delete account
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Delete your account?</DialogTitle>
-              <DialogDescription>
-                This will permanently delete your account and all associated
-                data. This action cannot be undone.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button variant='outline' onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
-              <Button
-                variant='destructive'
-                disabled={deleteMutation.isPending}
-                onClick={() => deleteMutation.mutate()}
-              >
-                {deleteMutation.isPending ? 'Deleting...' : 'Yes, delete'}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </CardContent>
     </Card>
   );
 }
 
 function Account() {
+  const [activeSection, setActiveSection] = useState<Section>(null);
+
+  const toggleSection = (section: Section) => {
+    setActiveSection((prev) => (prev === section ? null : section));
+  };
+
   return (
-    <div className='max-w-2xl mx-auto py-8 flex flex-col gap-6'>
-      <h2 className='text-2xl font-bold text-text'>Account</h2>
-      <ProfileSection user={MOCK_USER} />
-      <PasswordSection />
-      <DangerZone />
+    <div className='max-w-4xl mx-auto py-10 px-4 sm:px-6'>
+      <div className='mb-8'>
+        <h1 className='text-3xl font-bold tracking-tight text-foreground'>Account</h1>
+        <p className='text-muted-foreground mt-1'>Manage your profile and preferences.</p>
+      </div>
+
+      <div className='grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start'>
+        {/* Left — profile summary */}
+        <div className='space-y-4'>
+          <ProfileCard
+            user={MOCK_USER}
+            onEdit={() => toggleSection('profile')}
+          />
+
+          <Card className='p-4'>
+            <div className='flex items-center gap-3'>
+              <div className='p-2 rounded-lg bg-primary/10 text-primary'>
+                <TreePine className='w-4 h-4' />
+              </div>
+              <div>
+                <p className='text-xs text-muted-foreground'>Eco passport</p>
+                <p className='text-sm font-semibold text-foreground'>Active explorer</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Right — settings tiles + expanded panels */}
+        <div className='space-y-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
+            <SettingsTile
+              icon={<UserRound className='w-4 h-4' />}
+              title='Personal information'
+              description='Name, email address'
+              onClick={() => toggleSection('profile')}
+              active={activeSection === 'profile'}
+            />
+            <SettingsTile
+              icon={<KeyRound className='w-4 h-4' />}
+              title='Password &amp; security'
+              description='Update your password'
+              onClick={() => toggleSection('password')}
+              active={activeSection === 'password'}
+            />
+            <SettingsTile
+              icon={<Mail className='w-4 h-4' />}
+              title='Notifications'
+              description='Park updates &amp; alerts'
+              onClick={() => {}}
+              active={false}
+            />
+            <SettingsTile
+              icon={<Shield className='w-4 h-4' />}
+              title='Account actions'
+              description='Log out or delete account'
+              onClick={() => toggleSection('danger')}
+              active={activeSection === 'danger'}
+            />
+          </div>
+
+          {activeSection === 'profile' && (
+            <PersonalInfoForm user={MOCK_USER} onClose={() => setActiveSection(null)} />
+          )}
+          {activeSection === 'password' && (
+            <PasswordForm onClose={() => setActiveSection(null)} />
+          )}
+          {activeSection === 'danger' && (
+            <DangerPanel onClose={() => setActiveSection(null)} />
+          )}
+        </div>
+      </div>
     </div>
   );
 }
