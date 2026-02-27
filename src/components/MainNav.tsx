@@ -13,6 +13,7 @@ const navLinks = [
   { to: '/parks', label: 'Parks' },
   { to: '/users', label: 'Users' },
   { to: '/wishlist', label: 'Wishlist' },
+  { to: '/passport', label: 'Passport' },
   { to: '/account', label: 'Account' },
 ];
 

@@ -7,11 +7,11 @@ import { Toaster } from './components/ui/sonner';
 const Account = lazy(() => import('./pages/Account'));
 const Home = lazy(() => import('./pages/Home'));
 const NotFound = lazy(() => import('./pages/NotFound'));
-const ParkDetails = lazy(() => import('./pages/ParkDetails'));
 const Parks = lazy(() => import('./pages/Parks'));
 const Login = lazy(() => import('./pages/Login'));
 const SignUp = lazy(() => import('./pages/SignUp'));
 const Users = lazy(() => import('./pages/Users'));
+const Passport = lazy(() => import('./pages/Passport'));
 const Wishlist = lazy(() => import('./pages/Wishlist'));
 
 export default function App() {
@@ -23,6 +23,7 @@ export default function App() {
         <Route path='/parks' element={<Parks />} />
         {/* <Route path='/parks/:park_id' element={<ParkDetails />} /> */}
         <Route path='/wishlist' element={<Wishlist />} />
+        <Route path='/passport' element={<Passport />} />
         <Route path='/users' element={<Users />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/login' element={<Login />} />
