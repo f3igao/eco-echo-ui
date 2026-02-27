@@ -10,3 +10,13 @@ export type ParkReview = {
   created_at?: string;
   updated_at: string;
 };
+
+export type CreateParkReview = {
+  park_id: number;
+  user_id: number;
+  rating: number;
+  visit_date: string;
+  comment: string;
+  media_url?: string | null;
+  is_private: boolean;
+};

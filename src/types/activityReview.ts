@@ -9,3 +9,12 @@ export type ActivityReview = {
   created_at?: string;
   updated_at?: string;
 };
+
+export type CreateActivityReview = {
+  activity_id: number;
+  user_id: number;
+  rating: number;
+  comment: string;
+  media_url?: string | null;
+  is_private: boolean;
+};

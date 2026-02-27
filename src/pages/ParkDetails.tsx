@@ -40,7 +40,11 @@ function ParkDetails({ park }: ParkDetailsProps) {
 
   const { data, isLoading } = useQuery({
     queryKey: ['park-reviews', park.park_id],
-    queryFn: () => getParkReviewsByPark(park.park_id),
+    queryFn: () =>
+      getParkReviewsByPark(park.park_id).catch((err) => {
+        if (err?.response?.status === 404) return { park_reviews: [] };
+        throw err;
+      }),
     staleTime: 5 * 60 * 1000,
   });
 

@@ -1,6 +1,6 @@
-import type { ActivityReview } from '@/types/activityReview';
+import type { ActivityReview, CreateActivityReview } from '@/types/activityReview';
 import axios from 'axios';
 
-export function createActivityReview(review: Omit<ActivityReview, 'activity_review_id'>) {
-  return axios.post('api/activity-reviews', review).then((res) => res.data);
+export function createActivityReview(payload: CreateActivityReview) {
+  return axios.post<ActivityReview>('api/activity-reviews', payload).then((res) => res.data);
 }

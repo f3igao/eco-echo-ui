@@ -1,4 +1,4 @@
-import { ParkReview } from '@/types/parkReview';
+import type { CreateParkReview, ParkReview } from '@/types/parkReview';
 import axios from 'axios';
 
 export function getParkReviews() {
@@ -21,8 +21,8 @@ export function getParkReview(id: number) {
   return axios.get(`api/park-reviews/${id}`).then((res) => res.data);
 }
 
-export function createParkReview(park: ParkReview) {
-  return axios.post('api/park-reviews', park).then((res) => res.data);
+export function createParkReview(payload: CreateParkReview) {
+  return axios.post<ParkReview>('api/park-reviews', payload).then((res) => res.data);
 }
 
 export function deleteParkReview(id: number) {

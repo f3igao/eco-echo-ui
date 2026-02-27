@@ -17,7 +17,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import type { Activity } from '@/types/activity';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -47,6 +48,7 @@ interface LogVisitFormProps {
 function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
   const queryClient = useQueryClient();
   const [activityEntries, setActivityEntries] = useState<Record<number, ActivityEntry>>({});
+  const [succeeded, setSucceeded] = useState(false);
 
   const { data: activitiesData } = useQuery({
     queryKey: ['activities', 'park', parkId],
@@ -71,16 +73,16 @@ function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
 
   const mutation = useMutation({
     mutationFn: async (values: FormValues) => {
+      const mediaUrl = values.media_url || undefined;
+
       const parkReview = await createParkReview({
         park_id: parkId,
         user_id: MOCK_USER_ID,
-        rating: String(values.rating),
+        rating: values.rating,
         visit_date: values.visit_date,
         comment: values.comment ?? '',
-        media_url: values.media_url || null,
+        ...(mediaUrl ? { media_url: mediaUrl } : {}),
         is_private: values.is_private,
-        updated_at: new Date().toISOString(),
-        park_review_id: 0,
       });
 
       const checkedActivities = Object.entries(activityEntries).filter(
@@ -93,8 +95,8 @@ function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
             activity_id: Number(activityId),
             user_id: MOCK_USER_ID,
             rating: entry.rating || values.rating,
-            comment: values.comment,
-            media_url: values.media_url || null,
+            comment: values.comment ?? '',
+            ...(mediaUrl ? { media_url: mediaUrl } : {}),
             is_private: values.is_private,
           })
         )
@@ -104,7 +106,11 @@ function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['park-reviews', parkId] });
-      onSuccess();
+      setSucceeded(true);
+      setTimeout(() => {
+        setSucceeded(false);
+        onSuccess();
+      }, 1500);
     },
   });
 
@@ -124,6 +130,15 @@ function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
 
   const watchedRating = form.watch('rating');
 
+  if (succeeded) {
+    return (
+      <div className='flex flex-col items-center justify-center gap-2 py-8 text-primary'>
+        <CheckCircle2 className='w-10 h-10' />
+        <p className='font-semibold'>Visit logged!</p>
+      </div>
+    );
+  }
+
   return (
     <Form {...form}>
       <form
@@ -137,7 +152,7 @@ function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
             <FormItem>
               <FormLabel>Visit date</FormLabel>
               <FormControl>
-                <Input type='date' {...field} />
+                <Input type='date' max={today} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -168,7 +183,10 @@ function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
           name='comment'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Notes</FormLabel>
+              <FormLabel>
+                Notes{' '}
+                <span className='text-muted-foreground font-normal'>(optional)</span>
+              </FormLabel>
               <FormControl>
                 <Textarea
                   placeholder='What made this visit memorable?'
@@ -228,7 +246,10 @@ function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
           name='media_url'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Photo URL <span className='text-muted-foreground font-normal'>(optional)</span></FormLabel>
+              <FormLabel>
+                Photo URL{' '}
+                <span className='text-muted-foreground font-normal'>(optional)</span>
+              </FormLabel>
               <FormControl>
                 <Input placeholder='https://...' {...field} />
               </FormControl>
