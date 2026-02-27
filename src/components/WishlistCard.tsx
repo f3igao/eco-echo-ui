@@ -1,4 +1,4 @@
-import { useWishlists } from '@/hooks/useWishlists';
+import { useWishlist } from '@/hooks/useWishlist';
 import type { Park } from '@/types/park';
 import type { Wishlist } from '@/types/wishlist';
 import { BookmarkX, CalendarRange, ChevronDown, ChevronUp, MapPin, MessageSquare } from 'lucide-react';
@@ -43,7 +43,7 @@ function WishlistCard({
   park: Park | undefined;
   onRemove: (parkId: number, parkName: string) => void;
 }) {
-  const { isToggling, updateWishlist, isUpdating } = useWishlists(MOCK_USER_ID);
+  const { isToggling, updateWishlist, isUpdating } = useWishlist(MOCK_USER_ID);
   const [isExpanded, setIsExpanded] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: parseDateStr(wishlist.planned_date_start),

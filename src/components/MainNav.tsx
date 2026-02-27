@@ -12,7 +12,7 @@ import { Link, useLocation } from 'react-router-dom';
 const navLinks = [
   { to: '/parks', label: 'Parks' },
   { to: '/users', label: 'Users' },
-  { to: '/wishlists', label: 'Wishlists' },
+  { to: '/wishlist', label: 'Wishlist' },
   { to: '/account', label: 'Account' },
 ];
 

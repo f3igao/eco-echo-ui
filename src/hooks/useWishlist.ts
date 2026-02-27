@@ -3,11 +3,11 @@ import {
   deleteWishlistByUserAndPark,
   getWishlistsByUserId,
   updateWishlist,
-} from '@/api/wishlists';
+} from '@/api/wishlist';
 import type { Wishlist } from '@/types/wishlist';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export function useWishlists(userId: number) {
+export function useWishlist(userId: number) {
   const queryClient = useQueryClient();
   const queryKey = ['wishlists', 'user', userId];
 

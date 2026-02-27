@@ -27,7 +27,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useWishlists } from '@/hooks/useWishlists';
+import { useWishlist } from '@/hooks/useWishlist';
 import { validateEmail, validateMinLength } from '@/lib/form-validations';
 import type { Park } from '@/types/park';
 import type { ParkReview } from '@/types/parkReview';
@@ -485,7 +485,7 @@ function PasswordSection() {
 }
 
 function WishlistSection({ userId }: { userId: number }) {
-  const { wishlists, isLoading, toggleWishlist, isToggling } = useWishlists(userId);
+  const { wishlists, isLoading, toggleWishlist, isToggling } = useWishlist(userId);
 
   const parkQueries = useQueries({
     queries: wishlists.map((w) => ({

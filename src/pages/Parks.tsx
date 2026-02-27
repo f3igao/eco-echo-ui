@@ -3,7 +3,7 @@ import ParkCard from '@/components/ParkCard';
 import ParkCardSkeleton from '@/components/ParkCardSkeleton';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import { useParkReviews } from '@/hooks/useParkReviews';
-import { useWishlists } from '@/hooks/useWishlists';
+import { useWishlist } from '@/hooks/useWishlist';
 import type { Park } from '@/types/park';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
@@ -31,7 +31,7 @@ function Parks() {
       staleTime: 5 * 60 * 1000,
     });
 
-  const { isWishlisted, toggleWishlist, isToggling } = useWishlists(MOCK_USER_ID);
+  const { isWishlisted, toggleWishlist, isToggling } = useWishlist(MOCK_USER_ID);
   const { hasVisited } = useParkReviews(MOCK_USER_ID);
 
   useEffect(() => {

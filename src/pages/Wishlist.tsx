@@ -1,8 +1,7 @@
 import { getPark } from '@/api/parks';
 import Loading from '@/components/Loading';
 import WishlistCard from '@/components/WishlistCard';
-import { useWishlists } from '@/hooks/useWishlists';
-import { Badge } from '@/components/ui/badge';
+import { useWishlist } from '@/hooks/useWishlist';
 import type { Park } from '@/types/park';
 import { useQueries } from '@tanstack/react-query';
 import { Bookmark, Trees } from 'lucide-react';
@@ -14,8 +13,8 @@ const MOCK_USER_ID = 1;
 
 type PendingRemoval = { parkId: number; parkName: string };
 
-function Wishlists() {
-  const { wishlists, isLoading, removeWishlist } = useWishlists(MOCK_USER_ID);
+function Wishlist() {
+  const { wishlists, isLoading, removeWishlist } = useWishlist(MOCK_USER_ID);
   const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingRef = useRef<PendingRemoval | null>(null);
@@ -109,4 +108,4 @@ function Wishlists() {
   );
 }
 
-export default Wishlists;
+export default Wishlist;
