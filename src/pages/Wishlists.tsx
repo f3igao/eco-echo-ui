@@ -1,63 +1,13 @@
 import { getPark } from '@/api/parks';
 import Loading from '@/components/Loading';
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import WishlistCard from '@/components/WishlistCard';
 import { useWishlists } from '@/hooks/useWishlists';
 import type { Park } from '@/types/park';
-import type { Wishlist } from '@/types/wishlist';
 import { useQueries } from '@tanstack/react-query';
-import { Bookmark, BookmarkX, MapPin, Trees } from 'lucide-react';
-import ParkDetails from './ParkDetails';
+import { Bookmark, Trees } from 'lucide-react';
 
 // TODO: replace with actual user from auth context
 const MOCK_USER_ID = 1;
-
-function WishlistCard({ wishlist, park }: { wishlist: Wishlist; park: Park | undefined }) {
-  const { toggleWishlist, isToggling } = useWishlists(MOCK_USER_ID);
-
-  if (!park) {
-    return (
-      <div className='flex items-center gap-3 rounded-lg border bg-card p-4 text-muted-foreground text-sm'>
-        Loading park...
-      </div>
-    );
-  }
-
-  return (
-    <Dialog>
-      <div className='flex items-center gap-4 rounded-lg border bg-card p-4 hover:shadow-sm transition-shadow'>
-        <div className='flex-1 min-w-0'>
-            <DialogTrigger asChild>
-            <button type='button' className='text-left w-full'>
-              <p className='font-semibold text-text hover:text-primary transition-colors truncate'>
-                {park.name}
-              </p>
-              <p className='text-sm text-muted-foreground flex items-center gap-1 mt-0.5'>
-                <MapPin className='w-3 h-3 shrink-0' />
-                {park.location}
-              </p>
-            </button>
-          </DialogTrigger>
-        </div>
-        <button
-          type='button'
-          onClick={() => toggleWishlist(wishlist.park_id)}
-          disabled={isToggling}
-          className='shrink-0 text-muted-foreground hover:text-destructive transition-colors disabled:opacity-50'
-          title='Remove from wishlist'
-        >
-          <BookmarkX className='w-5 h-5' />
-        </button>
-      </div>
-      <DialogContent className='max-w-[640px]'>
-        <ParkDetails park={park} />
-      </DialogContent>
-    </Dialog>
-  );
-}
 
 function Wishlists() {
   const { wishlists, isLoading } = useWishlists(MOCK_USER_ID);
