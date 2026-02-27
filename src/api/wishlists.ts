@@ -1,10 +1,6 @@
 import type { Wishlist } from '@/types/wishlist';
 import axios from 'axios';
 
-export function getWishlists() {
-  return axios.get<{ wishlists: Wishlist[] }>('api/wishlists').then((res) => res.data);
-}
-
 export function getWishlistsByUserId(userId: number) {
   return axios
     .get<{ wishlists: Wishlist[] }>('api/wishlists', { params: { user_id: userId } })
@@ -24,5 +20,14 @@ export function deleteWishlist(wishlistId: number) {
 export function deleteWishlistByUserAndPark(userId: number, parkId: number) {
   return axios
     .delete(`api/wishlists/user/${userId}/park/${parkId}`)
+    .then((res) => res.data);
+}
+
+export function updateWishlist(
+  wishlistId: number,
+  data: { planned_date_start?: string | null; planned_date_end?: string | null; notes?: string | null }
+) {
+  return axios
+    .patch<Wishlist>(`api/wishlists/${wishlistId}`, data)
     .then((res) => res.data);
 }

@@ -2,6 +2,7 @@ import {
   createWishlist,
   deleteWishlistByUserAndPark,
   getWishlistsByUserId,
+  updateWishlist,
 } from '@/api/wishlists';
 import type { Wishlist } from '@/types/wishlist';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -52,6 +53,17 @@ export function useWishlists(userId: number) {
     }
   }
 
+  const updateMutation = useMutation({
+    mutationFn: ({
+      wishlistId,
+      data,
+    }: {
+      wishlistId: number;
+      data: { planned_date_start?: string | null; planned_date_end?: string | null; notes?: string | null };
+    }) => updateWishlist(wishlistId, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey }),
+  });
+
   return {
     wishlists,
     isLoading,
@@ -59,6 +71,8 @@ export function useWishlists(userId: number) {
     getWishlistEntry,
     toggleWishlist,
     removeWishlist,
+    updateWishlist: updateMutation.mutate,
     isToggling: addMutation.isPending || removeMutation.isPending,
+    isUpdating: updateMutation.isPending,
   };
 }
