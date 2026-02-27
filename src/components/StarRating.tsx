@@ -1,4 +1,4 @@
-import { clsx } from 'clsx';
+import { cn } from '@/lib/utils';
 import { Star } from 'lucide-react';
 import { useState } from 'react';
 
@@ -12,7 +12,7 @@ interface StarRatingProps {
 export function StarRating({ value, onChange, readonly = false, size = 'md' }: StarRatingProps) {
   const [hovered, setHovered] = useState(0);
 
-  const iconClass = clsx(
+  const iconClass = cn(
     'transition-colors',
     size === 'sm' ? 'w-4 h-4' : 'w-5 h-5',
     readonly ? 'cursor-default' : 'cursor-pointer'
@@ -25,7 +25,7 @@ export function StarRating({ value, onChange, readonly = false, size = 'md' }: S
         return (
           <Star
             key={star}
-            className={clsx(iconClass, filled ? 'text-amber-400' : 'text-muted-foreground/40')}
+            className={cn(iconClass, filled ? 'text-amber-400' : 'text-muted-foreground/40')}
             fill={filled ? 'currentColor' : 'none'}
             onMouseEnter={() => !readonly && setHovered(star)}
             onMouseLeave={() => !readonly && setHovered(0)}

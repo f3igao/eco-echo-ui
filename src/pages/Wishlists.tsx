@@ -2,10 +2,12 @@ import { getPark } from '@/api/parks';
 import Loading from '@/components/Loading';
 import WishlistCard from '@/components/WishlistCard';
 import { useWishlists } from '@/hooks/useWishlists';
+import { Badge } from '@/components/ui/badge';
 import type { Park } from '@/types/park';
 import { useQueries } from '@tanstack/react-query';
 import { Bookmark, Trees } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 // TODO: replace with actual user from auth context
 const MOCK_USER_ID = 1;
@@ -17,6 +19,7 @@ function Wishlists() {
   const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingRef = useRef<PendingRemoval | null>(null);
+  const toastIdRef = useRef<string | number | null>(null);
   pendingRef.current = pendingRemoval;
 
   useEffect(() => {
@@ -25,28 +28,46 @@ function Wishlists() {
     };
   }, []);
 
-  function handleRemove(parkId: number, parkName: string) {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    if (pendingRef.current) {
-      removeWishlist(pendingRef.current.parkId);
-    }
-    setPendingRemoval({ parkId, parkName });
-    timerRef.current = setTimeout(() => {
-      removeWishlist(parkId);
-      setPendingRemoval(null);
-      timerRef.current = null;
-    }, 5000);
-  }
-
   function handleUndo() {
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = null;
     setPendingRemoval(null);
+    toastIdRef.current = null;
   }
 
-  const displayedWishlists = pendingRemoval
-    ? wishlists.filter((w) => w.park_id !== pendingRemoval.parkId)
-    : wishlists;
+  function handleRemove(parkId: number, parkName: string) {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    if (pendingRef.current) {
+      removeWishlist(pendingRef.current.parkId);
+      if (toastIdRef.current !== null) toast.dismiss(toastIdRef.current);
+    }
+
+    setPendingRemoval({ parkId, parkName });
+
+    toastIdRef.current = toast(`Removed ${parkName} from your wishlist`, {
+      duration: 5000,
+      action: {
+        label: 'Undo',
+        onClick: handleUndo,
+      },
+    });
+
+    timerRef.current = setTimeout(() => {
+      removeWishlist(parkId);
+      setPendingRemoval(null);
+      timerRef.current = null;
+      toastIdRef.current = null;
+    }, 5000);
+  }
+
+  const displayedWishlists = (
+    pendingRemoval ? wishlists.filter((w) => w.park_id !== pendingRemoval.parkId) : wishlists
+  ).toSorted((a, b) => {
+    if (!a.planned_date_start && !b.planned_date_start) return 0;
+    if (!a.planned_date_start) return 1;
+    if (!b.planned_date_start) return -1;
+    return a.planned_date_start < b.planned_date_start ? -1 : a.planned_date_start > b.planned_date_start ? 1 : 0;
+  });
 
   const parkQueries = useQueries({
     queries: displayedWishlists.map((w) => ({
@@ -63,16 +84,6 @@ function Wishlists() {
 
   return (
     <div className='max-w-2xl mx-auto py-8'>
-      <div className='flex items-center gap-3 mb-6'>
-        <Bookmark className='w-6 h-6 text-primary' />
-        <h2 className='text-2xl font-bold text-text'>My Wishlist</h2>
-        {displayCount > 0 && (
-          <span className='text-sm text-muted-foreground'>
-            ({displayCount} park{displayCount !== 1 ? 's' : ''})
-          </span>
-        )}
-      </div>
-
       {displayCount === 0 ? (
         <div className='flex flex-col items-center justify-center gap-3 py-16 text-center'>
           <Trees className='w-10 h-10 text-muted-foreground' />
@@ -92,33 +103,6 @@ function Wishlists() {
               onRemove={handleRemove}
             />
           ))}
-        </div>
-      )}
-
-      {pendingRemoval && (
-        <div
-          key={pendingRemoval.parkId}
-          className='fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-80 bg-card border rounded-lg shadow-lg overflow-hidden'
-        >
-          <div className='flex items-center justify-between gap-3 px-4 py-3'>
-            <p className='text-sm text-foreground truncate'>
-              Deleted <span className='font-medium'>{pendingRemoval.parkName}</span> from your wishlist
-            </p>
-            <button
-              type='button'
-              onClick={handleUndo}
-              className='shrink-0 text-sm font-semibold text-primary hover:underline'
-            >
-              Undo
-            </button>
-          </div>
-          <div className='h-1 bg-muted'>
-            <div
-              key={pendingRemoval.parkId}
-              className='h-full bg-primary'
-              style={{ animation: 'shrink-width 5s linear forwards' }}
-            />
-          </div>
         </div>
       )}
     </div>

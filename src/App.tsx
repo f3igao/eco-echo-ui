@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { Outlet, Route, Routes } from 'react-router-dom';
 import { MainNav } from './components/MainNav';
 import Loading from './components/Loading';
+import { Toaster } from './components/ui/sonner';
 
 const Account = lazy(() => import('./pages/Account'));
 const Activities = lazy(() => import('./pages/Activities'));
@@ -44,6 +45,7 @@ function Layout() {
           <Outlet />
         </Suspense>
       </div>
+      <Toaster />
     </div>
   );
 }

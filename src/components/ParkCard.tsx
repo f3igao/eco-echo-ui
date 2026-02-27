@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import type { Park } from '@/types/park';
-import { clsx } from 'clsx';
+import { cn } from '@/lib/utils';
 import { Bookmark, CircleCheckBig } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import ParkDetails from '@/pages/ParkDetails';
@@ -66,7 +66,7 @@ function ParkCard({
         <Dialog>
           <DialogTrigger asChild>
             <Card
-              className={clsx(
+              className={cn(
                 'w-80 h-72 relative bg-cover cursor-pointer transition-opacity duration-500 opacity-100',
                 { 'grayscale-[75%] hover:grayscale-0': !haveBeen }
               )}
@@ -77,7 +77,7 @@ function ParkCard({
                 {isLoggedIn && onToggleWishlist && (
                   <Bookmark
                     fill={wishlisted ? 'white' : 'none'}
-                    className={clsx(
+                    className={cn(
                       'h-4 w-4 cursor-pointer text-white hover:fill-white m-3 transition-all',
                       isToggling && 'opacity-50 pointer-events-none'
                     )}
@@ -98,7 +98,7 @@ function ParkCard({
                 {isLoggedIn && (
                   <CircleCheckBig
                     fill={haveBeen ? 'green' : 'none'}
-                    className={clsx(
+                    className={cn(
                       'h-4 w-4 m-3',
                       haveBeen ? 'text-green-400' : 'text-white'
                     )}
