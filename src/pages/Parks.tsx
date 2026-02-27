@@ -2,6 +2,7 @@ import { getParks } from '@/api/parks';
 import ParkCard from '@/components/ParkCard';
 import ParkCardSkeleton from '@/components/ParkCardSkeleton';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
+import { useParkReviews } from '@/hooks/useParkReviews';
 import { useWishlists } from '@/hooks/useWishlists';
 import type { Park } from '@/types/park';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -31,6 +32,7 @@ function Parks() {
     });
 
   const { isWishlisted, toggleWishlist, isToggling } = useWishlists(MOCK_USER_ID);
+  const { hasVisited } = useParkReviews(MOCK_USER_ID);
 
   useEffect(() => {
     if (isVisible && hasNextPage && !isFetchingNextPage) {
@@ -57,6 +59,7 @@ function Parks() {
                   wishlisted={isWishlisted(park.park_id)}
                   onToggleWishlist={() => toggleWishlist(park.park_id)}
                   isToggling={isToggling}
+                  haveBeen={hasVisited(park.park_id)}
                 />
               </li>
             ))}

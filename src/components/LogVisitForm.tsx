@@ -1,6 +1,7 @@
 import { createActivityReview } from '@/api/activity-reviews';
 import { getActivitiesByPark } from '@/api/activities';
 import { createParkReview } from '@/api/park-reviews';
+import { PARK_REVIEWS_USER_QUERY_KEY } from '@/hooks/useParkReviews';
 import { StarRating } from '@/components/StarRating';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -106,6 +107,7 @@ function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['park-reviews', parkId] });
+      queryClient.invalidateQueries({ queryKey: PARK_REVIEWS_USER_QUERY_KEY(MOCK_USER_ID) });
       setSucceeded(true);
       setTimeout(() => {
         setSucceeded(false);

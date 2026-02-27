@@ -27,6 +27,7 @@ interface ParkCardProps {
   wishlisted?: boolean;
   onToggleWishlist?: () => void;
   isToggling?: boolean;
+  haveBeen?: boolean;
 }
 
 function ParkCard({
@@ -35,10 +36,9 @@ function ParkCard({
   wishlisted = false,
   onToggleWishlist,
   isToggling = false,
+  haveBeen = false,
 }: ParkCardProps) {
   const { name, location } = park;
-
-  const [haveBeen, setHaveBeen] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const { ref, isVisible } = useIntersectionObserver<HTMLDivElement>({
@@ -99,13 +99,9 @@ function ParkCard({
                   <CircleCheckBig
                     fill={haveBeen ? 'green' : 'none'}
                     className={clsx(
-                      'h-4 w-4 cursor-pointer hover:fill-primary m-3',
+                      'h-4 w-4 m-3',
                       haveBeen ? 'text-green-400' : 'text-white'
                     )}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setHaveBeen(!haveBeen);
-                    }}
                   />
                 )}
               </CardFooter>
