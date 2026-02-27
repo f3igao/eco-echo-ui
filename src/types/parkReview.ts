@@ -6,6 +6,7 @@ export type ParkReview = {
   rating: string;
   park_id: number;
   user_id: number;
+  visit_date: string;
   created_at?: string;
   updated_at: string;
 };

@@ -4,7 +4,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
-import { Park } from '@/types/park';
+import type { Park } from '@/types/park';
 import { clsx } from 'clsx';
 
 const kebabCase = (str: string) =>
@@ -121,7 +121,7 @@ function ParkCard({ index, park }: ParkCardProps) {
         </Card>
       </DialogTrigger>
       <DialogContent className='max-w-[640px]'>
-        <ParkDetails />
+        <ParkDetails park={park} />
       </DialogContent>
       {/* <DialogContent className='max-w-[640px]'>
         <DialogHeader>

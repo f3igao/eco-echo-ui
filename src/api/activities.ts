@@ -9,6 +9,12 @@ export function getActivities() {
   );
 }
 
+export function getActivitiesByPark(parkId: number) {
+  return axios
+    .get(`api/activities/park/${parkId}`)
+    .then((res) => res.data);
+}
+
 export function getActivity(id: number) {
   return axios.get(`api/activities/${id}`).then((res) => res.data);
 }
