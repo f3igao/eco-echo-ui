@@ -9,6 +9,8 @@ import { useQuery } from '@tanstack/react-query';
 import { ArrowUpRight, CalendarDays, MapPin, Trees } from 'lucide-react';
 import { useState } from 'react';
 
+const MOCK_USER_ID = 1;
+
 interface ParkDetailsProps {
   park: Park;
 }
@@ -49,6 +51,8 @@ function ParkDetails({ park }: ParkDetailsProps) {
   });
 
   const reviews: ParkReview[] = data?.park_reviews ?? [];
+  const myVisits = reviews.filter((r) => r.user_id === MOCK_USER_ID);
+  const otherReviews = reviews.filter((r) => r.user_id !== MOCK_USER_ID);
   const avgRating =
     reviews.length > 0
       ? reviews.reduce((sum, r) => sum + Number(r.rating), 0) / reviews.length
@@ -121,42 +125,67 @@ function ParkDetails({ park }: ParkDetailsProps) {
       </div>
 
       {!showForm && (
-        <div className='space-y-3'>
-          <div className='flex items-center justify-between'>
-            <h3 className='font-semibold'>
-              Reviews{' '}
-              {reviews.length > 0 && (
-                <span className='text-muted-foreground font-normal text-sm'>
-                  ({reviews.length})
-                </span>
+        <>
+          {(isLoading || myVisits.length > 0) && (
+            <div className='space-y-3'>
+              <h3 className='font-semibold'>
+                Past Visits{' '}
+                {myVisits.length > 0 && (
+                  <span className='text-muted-foreground font-normal text-sm'>
+                    ({myVisits.length})
+                  </span>
+                )}
+              </h3>
+
+              {isLoading && (
+                <p className='text-sm text-muted-foreground'>Loading...</p>
               )}
-            </h3>
-            {avgRating > 0 && (
-              <div className='flex items-center gap-1.5'>
-                <StarRating value={Math.round(avgRating)} readonly size='sm' />
-                <span className='text-sm text-muted-foreground'>
-                  {avgRating.toFixed(1)}
-                </span>
+
+              <div className='space-y-2'>
+                {myVisits.map((review) => (
+                  <ReviewCard key={review.park_review_id} review={review} />
+                ))}
               </div>
+            </div>
+          )}
+
+          <div className='space-y-3'>
+            <div className='flex items-center justify-between'>
+              <h3 className='font-semibold'>
+                Reviews{' '}
+                {otherReviews.length > 0 && (
+                  <span className='text-muted-foreground font-normal text-sm'>
+                    ({otherReviews.length})
+                  </span>
+                )}
+              </h3>
+              {avgRating > 0 && (
+                <div className='flex items-center gap-1.5'>
+                  <StarRating value={Math.round(avgRating)} readonly size='sm' />
+                  <span className='text-sm text-muted-foreground'>
+                    {avgRating.toFixed(1)}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {isLoading && (
+              <p className='text-sm text-muted-foreground'>Loading reviews...</p>
             )}
+
+            {!isLoading && otherReviews.length === 0 && (
+              <p className='text-sm text-muted-foreground'>
+                No reviews yet. Be the first to log a visit!
+              </p>
+            )}
+
+            <div className='space-y-2'>
+              {otherReviews.map((review) => (
+                <ReviewCard key={review.park_review_id} review={review} />
+              ))}
+            </div>
           </div>
-
-          {isLoading && (
-            <p className='text-sm text-muted-foreground'>Loading reviews...</p>
-          )}
-
-          {!isLoading && reviews.length === 0 && (
-            <p className='text-sm text-muted-foreground'>
-              No reviews yet. Be the first to log a visit!
-            </p>
-          )}
-
-          <div className='space-y-2'>
-            {reviews.map((review) => (
-              <ReviewCard key={review.park_review_id} review={review} />
-            ))}
-          </div>
-        </div>
+        </>
       )}
     </div>
   );
