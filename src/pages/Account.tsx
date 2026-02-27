@@ -1,3 +1,5 @@
+import { getParkReviewsByUser } from '@/api/park-reviews';
+import { getPark } from '@/api/parks';
 import { updateUser } from '@/api/users';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,11 +28,13 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { validateEmail, validateMinLength } from '@/lib/form-validations';
+import type { Park } from '@/types/park';
+import type { ParkReview } from '@/types/parkReview';
 import type { User } from '@/types/user';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { CalendarDays, KeyRound, LogOut, Mail, Trash2, UserRound } from 'lucide-react';
+import { CalendarDays, KeyRound, LogOut, Mail, MapPin, Star, Trash2, Trees, UserRound } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -69,6 +73,201 @@ function getInitials(name: string) {
     .join('')
     .toUpperCase()
     .slice(0, 2);
+}
+
+const STAMP_PALETTES = [
+  { bg: '#4A6741', border: '#3A5432' },
+  { bg: '#7B5E3D', border: '#614A2E' },
+  { bg: '#2E6B5C', border: '#1E5246' },
+  { bg: '#8B4B2B', border: '#6D3920' },
+  { bg: '#3D6275', border: '#2D4E5E' },
+  { bg: '#7A5C32', border: '#614A25' },
+  { bg: '#5C6B3E', border: '#49562F' },
+  { bg: '#6B3D5A', border: '#552E47' },
+];
+
+type ParkStamp = {
+  parkId: number;
+  parkName: string;
+  location: string;
+  visitCount: number;
+  lastVisitDate: string;
+  avgRating: number;
+  colorIndex: number;
+};
+
+function PassportStamp({ stamp }: { stamp: ParkStamp }) {
+  const palette = STAMP_PALETTES[stamp.colorIndex % STAMP_PALETTES.length];
+  const dateObj = stamp.lastVisitDate ? new Date(stamp.lastVisitDate) : null;
+  const date =
+    dateObj && !isNaN(dateObj.getTime())
+      ? dateObj.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+      : '';
+
+  return (
+    <div
+      className='relative flex flex-col items-center justify-between rounded-lg p-2 select-none shrink-0'
+      style={{
+        width: 128,
+        height: 128,
+        background: palette.bg,
+        border: `3px solid ${palette.border}`,
+      }}
+    >
+      <div
+        className='absolute inset-[6px] rounded pointer-events-none'
+        style={{ border: `1.5px dashed rgba(255,255,255,0.35)` }}
+      />
+
+      <span
+        className='text-[9px] font-bold tracking-[0.18em] uppercase opacity-70 mt-1 z-10'
+        style={{ color: 'rgba(255,255,255,0.8)' }}
+      >
+        visited
+      </span>
+
+      <div className='flex flex-col items-center gap-0.5 z-10 px-2'>
+        <span
+          className='text-white font-bold text-center leading-tight line-clamp-2 text-[11px] tracking-wide'
+          title={stamp.parkName}
+        >
+          {stamp.parkName}
+        </span>
+        <span className='text-[9px] opacity-60 text-white text-center truncate w-full' title={stamp.location}>
+          {stamp.location}
+        </span>
+      </div>
+
+      <div className='flex flex-col items-center gap-0.5 mb-1 z-10'>
+        <span
+          className='text-[9px] font-semibold text-white opacity-80'
+        >
+          {stamp.visitCount} {stamp.visitCount === 1 ? 'visit' : 'visits'} · {date}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({
+  icon,
+  value,
+  label,
+}: {
+  icon: React.ReactNode;
+  value: string | number;
+  label: string;
+}) {
+  return (
+    <div className='flex flex-col items-center gap-1 rounded-lg border bg-card p-3 text-center'>
+      <div className='text-primary'>{icon}</div>
+      <span className='text-xl font-bold text-text'>{value}</span>
+      <span className='text-xs text-muted-foreground leading-tight'>{label}</span>
+    </div>
+  );
+}
+
+function PassportSection({ userId }: { userId: number }) {
+  const { data: reviewsData, isLoading } = useQuery({
+    queryKey: ['park-reviews', 'user', userId],
+    queryFn: () =>
+      getParkReviewsByUser(userId).catch((err) => {
+        if (err?.response?.status === 404) return { park_reviews: [] };
+        throw err;
+      }),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const reviews: ParkReview[] = reviewsData?.park_reviews ?? [];
+
+  const uniqueParkIds = [...new Set(reviews.map((r) => r.park_id))];
+
+  const parkQueries = useQueries({
+    queries: uniqueParkIds.map((id) => ({
+      queryKey: ['parks', id],
+      queryFn: () => getPark(id).then((res: { park: Park }) => res.park ?? res),
+      staleTime: 10 * 60 * 1000,
+    })),
+  });
+
+  const stamps: ParkStamp[] = uniqueParkIds
+    .map((parkId, i) => {
+      const park = parkQueries[i]?.data as Park | undefined;
+      const parkReviews = reviews.filter((r) => r.park_id === parkId);
+      const sorted = [...parkReviews].sort(
+        (a, b) => new Date(b.visit_date).getTime() - new Date(a.visit_date).getTime(),
+      );
+      const avgRating =
+        parkReviews.length > 0
+          ? parkReviews.reduce((s, r) => s + Number(r.rating), 0) / parkReviews.length
+          : 0;
+
+      return {
+        parkId,
+        parkName: park?.name ?? `Park #${parkId}`,
+        location: park?.location ?? '',
+        visitCount: parkReviews.length,
+        lastVisitDate: sorted[0]?.visit_date ?? '',
+        avgRating,
+        colorIndex: i,
+      };
+    })
+    .sort((a, b) => new Date(b.lastVisitDate).getTime() - new Date(a.lastVisitDate).getTime());
+
+  const totalVisits = reviews.length;
+  const parksExplored = uniqueParkIds.length;
+  const avgRatingAll =
+    reviews.length > 0
+      ? reviews.reduce((s, r) => s + Number(r.rating), 0) / reviews.length
+      : 0;
+
+  return (
+    <Card>
+      <CardHeader className='pb-3'>
+        <CardTitle className='flex items-center gap-2 text-text'>
+          <Trees className='w-5 h-5 text-primary' /> Adventure Passport
+        </CardTitle>
+        <CardDescription>Your park visits and exploration stats</CardDescription>
+      </CardHeader>
+      <CardContent className='space-y-5'>
+        <div className='grid grid-cols-3 gap-3'>
+          <StatCard
+            icon={<MapPin className='w-4 h-4' />}
+            value={parksExplored}
+            label='Parks Explored'
+          />
+          <StatCard
+            icon={<CalendarDays className='w-4 h-4' />}
+            value={totalVisits}
+            label='Total Visits'
+          />
+          <StatCard
+            icon={<Star className='w-4 h-4' />}
+            value={avgRatingAll > 0 ? avgRatingAll.toFixed(1) : '—'}
+            label='Avg Rating'
+          />
+        </div>
+
+        {isLoading && (
+          <p className='text-sm text-muted-foreground'>Loading passport...</p>
+        )}
+
+        {!isLoading && stamps.length === 0 && (
+          <p className='text-sm text-muted-foreground'>
+            No stamps yet — log a park visit to earn your first one!
+          </p>
+        )}
+
+        {stamps.length > 0 && (
+          <div className='flex flex-wrap gap-3'>
+            {stamps.map((stamp) => (
+              <PassportStamp key={stamp.parkId} stamp={stamp} />
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
 }
 
 function ProfileSection({ user }: { user: User }) {
@@ -349,8 +548,9 @@ function DangerZone() {
 
 function Account() {
   return (
-    <div className='max-w-xl mx-auto py-8 flex flex-col gap-6'>
+    <div className='max-w-2xl mx-auto py-8 flex flex-col gap-6'>
       <h2 className='text-2xl font-bold text-text'>Account</h2>
+      <PassportSection userId={MOCK_USER.user_id} />
       <ProfileSection user={MOCK_USER} />
       <PasswordSection />
       <DangerZone />

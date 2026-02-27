@@ -17,6 +17,12 @@ export function getParkReviewsByPark(id: number) {
     .then((res) => res.data);
 }
 
+export function getParkReviewsByUser(userId: number) {
+  return axios
+    .get(`/api/park-reviews/user/${userId}`)
+    .then((res) => res.data);
+}
+
 export function getParkReview(id: number) {
   return axios.get(`api/park-reviews/${id}`).then((res) => res.data);
 }
