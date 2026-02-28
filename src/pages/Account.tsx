@@ -1,3 +1,4 @@
+import { getParkReviewsByUser } from '@/api/park-reviews';
 import { deleteUser, updateUser } from '@/api/users';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -29,9 +30,10 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/context/AuthContext';
 import { validateEmail, validateMinLength } from '@/lib/form-validations';
+import type { ParkReview } from '@/types/parkReview';
 import type { User } from '@/types/user';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import {
   CalendarDays,
@@ -65,6 +67,13 @@ const passwordSchema = z
     message: "Passwords don't match.",
     path: ['confirmPassword'],
   });
+
+function getExplorerTier(uniqueParks: number): string {
+  if (uniqueParks === 0) return 'New explorer';
+  if (uniqueParks < 5) return 'Active explorer';
+  if (uniqueParks < 10) return 'Trailblazer';
+  return 'Park legend';
+}
 
 function getInitials(name: string) {
   return name
@@ -444,6 +453,20 @@ function Account() {
     setActiveSection((prev) => (prev === section ? null : section));
   };
 
+  const { data: reviewsData } = useQuery({
+    queryKey: ['park-reviews', 'user', user?.user_id],
+    queryFn: () =>
+      getParkReviewsByUser(user?.user_id as number).catch((err) => {
+        if (err?.response?.status === 404) return { park_reviews: [] as ParkReview[] };
+        throw err;
+      }),
+    enabled: !!user?.user_id,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const uniqueParks = new Set((reviewsData?.park_reviews ?? []).map((r: ParkReview) => r.park_id)).size;
+  const explorerTier = getExplorerTier(uniqueParks);
+
   if (!user) return null;
 
   return (
@@ -468,7 +491,7 @@ function Account() {
               </div>
               <div>
                 <p className='text-xs text-muted-foreground'>Eco passport</p>
-                <p className='text-sm font-semibold text-foreground'>Active explorer</p>
+                <p className='text-sm font-semibold text-foreground'>{explorerTier}</p>
               </div>
             </div>
           </Card>
