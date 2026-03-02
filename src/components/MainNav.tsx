@@ -10,8 +10,18 @@ import { Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 
+function getInitials(name: string) {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+}
+
 const authedNavLinks = [
   { to: '/parks', label: 'Parks' },
+  { to: '/forum', label: 'Forum' },
   { to: '/users', label: 'Users' },
   { to: '/wishlist', label: 'Wishlist' },
   { to: '/passport', label: 'Passport' },
@@ -20,6 +30,7 @@ const authedNavLinks = [
 
 const guestNavLinks = [
   { to: '/parks', label: 'Parks' },
+  { to: '/forum', label: 'Forum' },
   { to: '/login', label: 'Log In' },
 ];
 
@@ -43,9 +54,17 @@ export function MainNav() {
             {navLinks.map(({ to, label }) => (
               <NavigationMenuItem key={to}>
                 <NavigationMenuLink asChild>
-                  <Link to={to} className={navigationMenuTriggerStyle()}>
-                    {label}
-                  </Link>
+                  {to === '/account' && user ? (
+                    <Link to={to} className='px-3 py-2'>
+                      <div className='w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold'>
+                        {getInitials(user.name)}
+                      </div>
+                    </Link>
+                  ) : (
+                    <Link to={to} className={navigationMenuTriggerStyle()}>
+                      {label}
+                    </Link>
+                  )}
                 </NavigationMenuLink>
               </NavigationMenuItem>
             ))}

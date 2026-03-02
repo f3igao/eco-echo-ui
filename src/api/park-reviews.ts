@@ -9,17 +9,19 @@ export function getParkReviews() {
     .then((res) => res.data);
 }
 
-export function getParkReviewsByPark(id: number) {
+export function getParkReviewsByPark(id: number, requesterId?: number) {
   return axios
     .get(`/api/park-reviews/park/${id}`, {
-      params: { _sort: 'created_on', _order: 'desc' },
+      params: { requester_id: requesterId },
     })
     .then((res) => res.data);
 }
 
-export function getParkReviewsByUser(userId: number) {
+export function getParkReviewsByUser(userId: number, requesterId?: number) {
   return axios
-    .get(`/api/park-reviews/user/${userId}`)
+    .get(`/api/park-reviews/user/${userId}`, {
+      params: { requester_id: requesterId },
+    })
     .then((res) => res.data);
 }
 

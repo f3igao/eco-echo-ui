@@ -11,8 +11,11 @@ const Parks = lazy(() => import('./pages/Parks'));
 const Login = lazy(() => import('./pages/Login'));
 const SignUp = lazy(() => import('./pages/SignUp'));
 const Users = lazy(() => import('./pages/Users'));
+const UserProfile = lazy(() => import('./pages/UserProfile'));
 const Passport = lazy(() => import('./pages/Passport'));
 const Wishlist = lazy(() => import('./pages/Wishlist'));
+const Forum = lazy(() => import('./pages/Forum'));
+const ForumPost = lazy(() => import('./pages/ForumPost'));
 
 export default function App() {
   return (
@@ -25,6 +28,9 @@ export default function App() {
         <Route path='/wishlist' element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
         <Route path='/passport' element={<ProtectedRoute><Passport /></ProtectedRoute>} />
         <Route path='/users' element={<ProtectedRoute><Users /></ProtectedRoute>} />
+        <Route path='/users/:userId' element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+        <Route path='/forum' element={<Forum />} />
+        <Route path='/forum/:postId' element={<ForumPost />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/login' element={<Login />} />
         <Route path='*' element={<NotFound />} />

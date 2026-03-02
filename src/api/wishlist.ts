@@ -1,9 +1,11 @@
 import type { Wishlist } from '@/types/wishlist';
 import axios from 'axios';
 
-export function getWishlistsByUserId(userId: number) {
+export function getWishlistsByUserId(userId: number, requesterId?: number) {
   return axios
-    .get<{ wishlists: Wishlist[] }>('api/wishlists', { params: { user_id: userId } })
+    .get<{ wishlists: Wishlist[] }>(`api/wishlists/user/${userId}`, {
+      params: requesterId ? { requester_id: requesterId } : undefined,
+    })
     .then((res) => res.data);
 }
 

@@ -38,9 +38,10 @@ import axios from 'axios';
 import {
   CalendarDays,
   ChevronRight,
+  EyeOff,
   KeyRound,
+  Lock,
   LogOut,
-  Mail,
   Shield,
   Trash2,
   TreePine,
@@ -84,7 +85,7 @@ function getInitials(name: string) {
     .slice(0, 2);
 }
 
-type Section = 'profile' | 'password' | 'danger' | null;
+type Section = 'profile' | 'password' | 'privacy' | 'danger' | null;
 
 function ProfileCard({ user, onEdit }: { user: User; onEdit: () => void }) {
   return (
@@ -359,6 +360,85 @@ function PasswordForm({ onClose }: { onClose: () => void }) {
   );
 }
 
+function PrivacyPanel({ user, onClose }: { user: User; onClose: () => void }) {
+  const { setUser } = useAuth();
+  const [saved, setSaved] = useState(false);
+
+  const mutation = useMutation({
+    mutationFn: (isPrivate: boolean) =>
+      updateUser(user.user_id, { ...user, is_private: isPrivate }),
+    onSuccess: (updatedUser) => {
+      setUser(updatedUser);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    },
+  });
+
+  return (
+    <Card>
+      <CardHeader className='pb-4'>
+        <div className='flex items-center gap-2'>
+          <EyeOff className='w-5 h-5 text-primary' />
+          <CardTitle className='text-base'>Profile privacy</CardTitle>
+        </div>
+        <CardDescription>
+          Control who can see your passport, wishlist, and reviews.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className='space-y-3'>
+        <button
+          type='button'
+          disabled={mutation.isPending}
+          onClick={() => mutation.mutate(false)}
+          className={`w-full text-left flex items-start gap-3 rounded-lg border p-4 cursor-pointer transition-all ${
+            !user.is_private ? 'border-primary/60 bg-primary/5' : 'hover:border-border/80'
+          }`}
+        >
+          <UserRound className='w-5 h-5 mt-0.5 shrink-0 text-muted-foreground' />
+          <div>
+            <p className='text-sm font-medium'>Public</p>
+            <p className='text-xs text-muted-foreground mt-0.5'>
+              Everyone can see your passport, wishlist, and reviews.
+            </p>
+          </div>
+          {!user.is_private && (
+            <div className='ml-auto mt-0.5 w-4 h-4 rounded-full bg-primary shrink-0' />
+          )}
+        </button>
+
+        <button
+          type='button'
+          disabled={mutation.isPending}
+          onClick={() => mutation.mutate(true)}
+          className={`w-full text-left flex items-start gap-3 rounded-lg border p-4 cursor-pointer transition-all ${
+            user.is_private ? 'border-primary/60 bg-primary/5' : 'hover:border-border/80'
+          }`}
+        >
+          <Lock className='w-5 h-5 mt-0.5 shrink-0 text-muted-foreground' />
+          <div>
+            <p className='text-sm font-medium'>Private</p>
+            <p className='text-xs text-muted-foreground mt-0.5'>
+              Only your followers can see your passport, wishlist, and reviews.
+            </p>
+          </div>
+          {user.is_private && (
+            <div className='ml-auto mt-0.5 w-4 h-4 rounded-full bg-primary shrink-0' />
+          )}
+        </button>
+
+        <div className='flex items-center justify-between pt-1'>
+          <Button type='button' variant='ghost' size='sm' onClick={onClose}>
+            Close
+          </Button>
+          {saved && (
+            <span className='text-sm text-primary font-medium animate-in fade-in'>Saved!</span>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 function DangerPanel({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -515,11 +595,11 @@ function Account() {
               active={activeSection === 'password'}
             />
             <SettingsTile
-              icon={<Mail className='w-4 h-4' />}
-              title='Notifications'
-              description='Park updates &amp; alerts'
-              onClick={() => {}}
-              active={false}
+              icon={<EyeOff className='w-4 h-4' />}
+              title='Profile privacy'
+              description={user.is_private ? 'Private — followers only' : 'Public — visible to all'}
+              onClick={() => toggleSection('privacy')}
+              active={activeSection === 'privacy'}
             />
             <SettingsTile
               icon={<Shield className='w-4 h-4' />}
@@ -535,6 +615,9 @@ function Account() {
           )}
           {activeSection === 'password' && (
             <PasswordForm onClose={() => setActiveSection(null)} />
+          )}
+          {activeSection === 'privacy' && (
+            <PrivacyPanel user={user} onClose={() => setActiveSection(null)} />
           )}
           {activeSection === 'danger' && (
             <DangerPanel onClose={() => setActiveSection(null)} />

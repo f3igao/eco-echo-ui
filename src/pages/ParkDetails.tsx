@@ -4,15 +4,26 @@ import LogVisitForm from '@/components/LogVisitForm';
 import { StarRating } from '@/components/StarRating';
 import { Button } from '@/components/ui/button';
 import { DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/context/AuthContext';
 import type { Park } from '@/types/park';
 import type { ParkReview } from '@/types/parkReview';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowUpRight, CalendarDays, MapPin, Trees } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 interface ParkDetailsProps {
   park: Park;
+}
+
+function getInitials(name: string) {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
 }
 
 function ReviewCard({ review }: { review: ParkReview }) {
@@ -162,6 +173,33 @@ function ParkDetails({ park }: ParkDetailsProps) {
                 {myVisits.map((review) => (
                   <ReviewCard key={review.park_review_id} review={review} />
                 ))}
+              </div>
+            </div>
+          )}
+
+          {otherReviews.length > 0 && (
+            <div className='space-y-2'>
+              <h3 className='font-semibold text-sm'>Recent Visitors</h3>
+              <div className='flex flex-wrap gap-2'>
+                {Array.from(
+                  new Map(otherReviews.map((r) => [r.user_id, r])).values(),
+                )
+                  .slice(0, 8)
+                  .map((r) => {
+                    const name = r.user_name ?? `User ${r.user_id}`;
+                    return (
+                      <Tooltip key={r.user_id}>
+                        <TooltipTrigger asChild>
+                          <Link to={`/users/${r.user_id}`}>
+                            <div className='w-8 h-8 rounded-full bg-primary/80 text-primary-foreground flex items-center justify-center text-xs font-bold hover:ring-2 hover:ring-primary transition-all'>
+                              {getInitials(name)}
+                            </div>
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent>{name}</TooltipContent>
+                      </Tooltip>
+                    );
+                  })}
               </div>
             </div>
           )}

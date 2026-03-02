@@ -27,7 +27,13 @@ export function getUsers() {
 }
 
 export function getUser(id: number) {
-  return axios.get<User>(`api/users/${id}`).then((res) => res.data);
+  return axios.get<User>(`/api/users/${id}`).then((res) => res.data);
+}
+
+export function searchUsers(query: string) {
+  return axios
+    .get<{ users: User[] }>('/api/users', { params: { search: query } })
+    .then((res) => res.data);
 }
 
 export function createUser(user: User) {
