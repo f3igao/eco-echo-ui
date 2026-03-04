@@ -1,6 +1,7 @@
 import { createParkReview } from '@/api/park-reviews';
 import { PARK_REVIEWS_USER_QUERY_KEY } from '@/hooks/useParkReviews';
 import { StarRating } from '@/components/StarRating';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -20,8 +21,6 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const MOCK_USER_ID = 1;
-
 const formSchema = z.object({
   visit_date: z.string().min(1, 'Visit date is required.'),
   rating: z.number().min(1, 'Please select a rating.').max(5),
@@ -39,6 +38,7 @@ interface LogVisitFormProps {
 }
 
 function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [succeeded, setSucceeded] = useState(false);
 
@@ -62,7 +62,7 @@ function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
 
       return createParkReview({
         park_id: parkId,
-        user_id: MOCK_USER_ID,
+        user_id: user?.user_id ?? 0,
         rating: values.rating,
         visit_date: values.visit_date,
         comment: values.comment ?? '',
@@ -73,7 +73,7 @@ function LogVisitForm({ parkId, onSuccess }: LogVisitFormProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['park-reviews', parkId] });
-      queryClient.invalidateQueries({ queryKey: PARK_REVIEWS_USER_QUERY_KEY(MOCK_USER_ID) });
+      queryClient.invalidateQueries({ queryKey: PARK_REVIEWS_USER_QUERY_KEY(user?.user_id ?? 0) });
       setSucceeded(true);
       setTimeout(() => {
         setSucceeded(false);

@@ -5,7 +5,9 @@ import { useAuth } from '@/context/AuthContext';
 import { useWishlist } from '@/hooks/useWishlist';
 import type { Park } from '@/types/park';
 import { useQueries } from '@tanstack/react-query';
-import { Bookmark, Trees } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Bookmark, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -83,13 +85,22 @@ function Wishlist() {
   return (
     <div className='max-w-2xl mx-auto py-8'>
       {displayCount === 0 ? (
-        <div className='flex flex-col items-center justify-center gap-3 py-16 text-center'>
-          <Trees className='w-10 h-10 text-muted-foreground' />
-          <p className='text-muted-foreground'>No parks on your wishlist yet.</p>
-          <p className='text-sm text-muted-foreground'>
-            Browse parks and click the{' '}
-            <Bookmark className='w-3.5 h-3.5 inline-block' /> bookmark icon to save them here.
-          </p>
+        <div className='flex flex-col items-center justify-center gap-4 py-20 text-center'>
+          <div className='w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center'>
+            <Bookmark className='w-8 h-8 text-primary' />
+          </div>
+          <div className='space-y-1'>
+            <h3 className='text-lg font-semibold'>Bookmark your next adventure</h3>
+            <p className='text-sm text-muted-foreground max-w-xs'>
+              Save parks you want to visit and plan your trips with dates and notes.
+            </p>
+          </div>
+          <Button asChild variant='outline' className='gap-2 mt-1'>
+            <Link to='/parks'>
+              <MapPin className='w-4 h-4' />
+              Browse parks
+            </Link>
+          </Button>
         </div>
       ) : (
         <div className='flex flex-col gap-3'>

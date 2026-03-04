@@ -21,6 +21,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { CalendarDays, MapPin, Star, Trees } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const STAMP_PALETTES = [
   { bg: '#4A6741', border: '#3A5432' },
@@ -282,9 +283,23 @@ function Passport() {
         )}
 
         {!isLoading && reviews.length === 0 && (
-          <p className='text-sm text-muted-foreground'>
-            No stamps yet. Log a park visit to earn your first one!
-          </p>
+          <div className='flex flex-col items-center justify-center gap-4 py-16 text-center'>
+            <div className='w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center'>
+              <Trees className='w-8 h-8 text-primary' />
+            </div>
+            <div className='space-y-1'>
+              <h3 className='text-lg font-semibold'>No stamps yet</h3>
+              <p className='text-sm text-muted-foreground max-w-xs'>
+                Log a park visit to earn your first stamp and start building your passport.
+              </p>
+            </div>
+            <Button asChild variant='outline' className='gap-2 mt-1'>
+              <Link to='/parks'>
+                <MapPin className='w-4 h-4' />
+                Browse parks
+              </Link>
+            </Button>
+          </div>
         )}
 
         {!isLoading && reviews.length > 0 && viewMode === 'all-time' && (
